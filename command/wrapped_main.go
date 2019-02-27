@@ -29,6 +29,7 @@ func WrappedMain() int {
 	profile := set.String("profile", "", "Use a specific profile from your credential file")
 	region := set.String("region", "", "The region to use. Overrides config/env settings")
 	maxRetries := set.Int("max-retries", 25, "The maximum number of times an AWS API request is being executed")
+	outputType := set.String("output", "string", "The type of output result (String, JSON or YAML) default: String")
 
 	log.SetFlags(0)
 	log.SetOutput(ioutil.Discard)
@@ -86,6 +87,7 @@ func WrappedMain() int {
 				provider:    p,
 				dryRun:      *dryRunFlag,
 				forceDelete: *forceDeleteFlag,
+				outputType:  *outputType,
 			}, nil
 		},
 	}
@@ -112,7 +114,9 @@ Options:
 
   --force		Start deleting without asking for confirmation
 
-  --max-retries	The maximum number of times an AWS API request is being executed
+  --max-retries		The maximum number of times an AWS API request is being executed
+
+  --output		The type of output result (string, json or yaml) default: string
 `
 }
 
