@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/cloudetc/awsweeper/resource"
+	"github.com/iflix/awsweeper/resource"
 	"github.com/stretchr/testify/assert"
 )
 

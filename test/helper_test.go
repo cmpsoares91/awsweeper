@@ -13,8 +13,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/cloudetc/awsweeper/command"
-	res "github.com/cloudetc/awsweeper/resource"
+	"github.com/iflix/awsweeper/command"
+	res "github.com/iflix/awsweeper/resource"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spf13/afero"

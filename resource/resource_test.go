@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 
 	"github.com/aws/aws-sdk-go/service/autoscaling"
-	"github.com/cloudetc/awsweeper/resource"
+	"github.com/iflix/awsweeper/resource"
 	"github.com/stretchr/testify/require"
 )
 

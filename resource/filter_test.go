@@ -3,7 +3,7 @@ package resource_test
 import (
 	"testing"
 
-	"github.com/cloudetc/awsweeper/resource"
+	"github.com/iflix/awsweeper/resource"
 	"github.com/stretchr/testify/assert"
 )
 

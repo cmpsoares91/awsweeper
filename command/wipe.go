@@ -8,8 +8,8 @@ import (
 
 	"log"
 
-	"github.com/cloudetc/awsweeper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/iflix/awsweeper/resource"
 	"github.com/mitchellh/cli"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"

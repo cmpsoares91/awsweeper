@@ -7,7 +7,7 @@ package main
 import (
 	"os"
 
-	"github.com/cloudetc/awsweeper/command"
+	"github.com/iflix/awsweeper/command"
 )
 
 func main() {

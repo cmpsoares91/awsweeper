@@ -5,13 +5,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudetc/awsweeper/command"
+	"github.com/iflix/awsweeper/command"
 	"github.com/spf13/afero"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elb"
-	res "github.com/cloudetc/awsweeper/resource"
+	res "github.com/iflix/awsweeper/resource"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )

@@ -8,9 +8,9 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/cloudetc/awsweeper/resource"
 	"github.com/hashicorp/terraform/config"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/iflix/awsweeper/resource"
 	"github.com/mitchellh/cli"
 	"github.com/terraform-providers/terraform-provider-aws/aws"
 )
