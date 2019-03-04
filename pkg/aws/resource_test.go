@@ -1,4 +1,4 @@
-package resource_test
+package aws_test
 
 import (
 	"testing"

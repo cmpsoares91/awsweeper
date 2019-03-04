@@ -1,4 +1,4 @@
-package resource
+package aws
 
 import (
 	"log"
@@ -8,21 +8,22 @@ import (
 	"github.com/aws/aws-sdk-go/service/efs"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/kms"
+	"github.com/iflix/awsweeper/pkg/terraform"
 )
 
 // here is where the filtering of resources happens, i.e.
 // the filter entry in the config for a certain resource type
 // is applied to all resources of that type.
-func (f Filter) Apply(resType TerraformResourceType, res Resources, raw interface{}, aws *AWS) []Resources {
+func (f Filters) Apply(resType terraform.ResourceType, res Resources, raw interface{}, api *API) Resources {
 	switch resType {
 	case EfsFileSystem:
-		return f.efsFileSystemFilter(res, raw, aws)
+		return f.efsFileSystemFilter(res, raw, api)
 	case IamUser:
-		return f.iamUserFilter(res, aws)
+		return f.iamUserFilter(res, api)
 	case IamPolicy:
-		return f.iamPolicyFilter(res, raw, aws)
+		return f.iamPolicyFilter(res, raw, api)
 	case KmsKey:
-		return f.kmsKeysFilter(res, aws)
+		return f.kmsKeysFilter(res, api)
 	case KmsAlias:
 		return f.kmsKeyAliasFilter(res)
 	default:
@@ -33,7 +34,7 @@ func (f Filter) Apply(resType TerraformResourceType, res Resources, raw interfac
 // For most resource types, this default filter method can be used.
 // However, for some resource types additional information need to be queried from the AWS API. Filtering for those
 // is handled in special functions below.
-func (f Filter) defaultFilter(res Resources) []Resources {
+func (f Filters) defaultFilter(res Resources) Resources {
 	result := Resources{}
 
 	for _, r := range res {
@@ -41,10 +42,10 @@ func (f Filter) defaultFilter(res Resources) []Resources {
 			result = append(result, r)
 		}
 	}
-	return []Resources{result}
+	return result
 }
 
-func (f Filter) efsFileSystemFilter(res Resources, raw interface{}, c *AWS) []Resources {
+func (f Filters) efsFileSystemFilter(res Resources, raw interface{}, c *API) Resources {
 	result := Resources{}
 	resultMt := Resources{}
 
@@ -65,10 +66,11 @@ func (f Filter) efsFileSystemFilter(res Resources, raw interface{}, c *AWS) []Re
 			result = append(result, r)
 		}
 	}
-	return []Resources{resultMt, result}
+
+	return append(resultMt, result...)
 }
 
-func (f Filter) iamUserFilter(res Resources, c *AWS) []Resources {
+func (f Filters) iamUserFilter(res Resources, c *API) Resources {
 	result := Resources{}
 	resultAttPol := Resources{}
 	resultUserPol := Resources{}
@@ -108,10 +110,12 @@ func (f Filter) iamUserFilter(res Resources, c *AWS) []Resources {
 			result = append(result, r)
 		}
 	}
-	return []Resources{resultUserPol, resultAttPol, result}
+
+	x := append(resultUserPol, resultAttPol...)
+	return append(x, result...)
 }
 
-func (f Filter) iamPolicyFilter(res Resources, raw interface{}, c *AWS) []Resources {
+func (f Filters) iamPolicyFilter(res Resources, raw interface{}, c *API) Resources {
 	result := Resources{}
 	resultAtt := Resources{}
 
@@ -154,10 +158,10 @@ func (f Filter) iamPolicyFilter(res Resources, raw interface{}, c *AWS) []Resour
 	}
 	// policy attachments are not resources
 	// what happens here, is that policy is detached from groups, users and roles
-	return []Resources{resultAtt, result}
+	return append(resultAtt, result...)
 }
 
-func (f Filter) kmsKeysFilter(res Resources, c *AWS) []Resources {
+func (f Filters) kmsKeysFilter(res Resources, c *API) Resources {
 	result := Resources{}
 
 	for _, r := range res {
@@ -177,10 +181,10 @@ func (f Filter) kmsKeysFilter(res Resources, c *AWS) []Resources {
 		}
 	}
 	// associated aliases will also be deleted after waiting period (between 7 to 30 days)
-	return []Resources{result}
+	return result
 }
 
-func (f Filter) kmsKeyAliasFilter(res Resources) []Resources {
+func (f Filters) kmsKeyAliasFilter(res Resources) Resources {
 	result := Resources{}
 
 	for _, r := range res {
@@ -188,5 +192,5 @@ func (f Filter) kmsKeyAliasFilter(res Resources) []Resources {
 			result = append(result, r)
 		}
 	}
-	return []Resources{result}
+	return result
 }

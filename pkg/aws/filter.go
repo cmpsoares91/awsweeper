@@ -1,33 +1,23 @@
-package resource
+package aws
 
 import (
 	"regexp"
 	"sort"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/iflix/awsweeper/pkg/terraform"
 
 	"log"
 
 	"fmt"
-
-	"github.com/spf13/afero"
-	"gopkg.in/yaml.v2"
 )
 
-// AppFs is an abstraction of the file system to allow mocking in tests.
-var AppFs = afero.NewOsFs()
-
-// Config represents the content of a yaml file that is used as a contract to filter resources for deletion.
-type Config map[TerraformResourceType][]TypeFilter
-
-// TypeFilter represents an entry in Config and selects the resources of a particular resource type.
-type TypeFilter struct {
-	ID   *string           `yaml:",omitempty"`
-	Tags map[string]string `yaml:",omitempty"`
-	// select resources by creation time
-	Created *Created `yaml:",omitempty"`
-	Age     *Age     `yaml:",omitempty"`
+// Filter represents an entry in Config and selects the resources of a particular resource type.
+type Filter struct {
+	ID      *string           `yaml:",omitempty"`
+	Tags    map[string]string `yaml:",omitempty"`
+	Created *Created          `yaml:",omitempty"`
+	Age     *Age              `yaml:",omitempty"`
 }
 
 type Created struct {
@@ -40,37 +30,11 @@ type Age struct {
 	After  *time.Duration `yaml:",omitempty"`
 }
 
-// Filter selects resources based on a given yaml config.
-type Filter struct {
-	Cfg Config
-}
-
-// NewFilter creates a new filter based on a config given via a yaml file.
-func NewFilter(yamlFile string) *Filter {
-	return &Filter{
-		Cfg: read(yamlFile),
-	}
-}
-
-// read reads a filter from a yaml file.
-func read(filename string) Config {
-	var cfg Config
-
-	data, err := afero.ReadFile(AppFs, filename)
-	if err != nil {
-		logrus.WithError(err).Fatalf("Failed to read config file: %s", filename)
-	}
-
-	err = yaml.UnmarshalStrict(data, &cfg)
-	if err != nil {
-		logrus.WithError(err).Fatalf("Cannot unmarshal config: %s", filename)
-	}
-
-	return cfg
-}
+// Filters selects resources based on a given yaml config.
+type Filters map[terraform.ResourceType][]Filter
 
 // Validate checks if all resource types appearing in the config are currently supported.
-func (f Filter) Validate() error {
+func (f Filters) Validate() error {
 	for _, resType := range f.Types() {
 		if !SupportedResourceType(resType) {
 			return fmt.Errorf("unsupported resource type found in yaml config: %s", resType)
@@ -80,10 +44,10 @@ func (f Filter) Validate() error {
 }
 
 // Types returns all the resource types in the config in their dependency order.
-func (f Filter) Types() []TerraformResourceType {
-	resTypes := make([]TerraformResourceType, 0, len(f.Cfg))
+func (f Filters) Types() []terraform.ResourceType {
+	resTypes := make([]terraform.ResourceType, 0, len(f))
 
-	for k := range f.Cfg {
+	for k := range f {
 		resTypes = append(resTypes, k)
 	}
 
@@ -95,7 +59,7 @@ func (f Filter) Types() []TerraformResourceType {
 }
 
 // MatchID checks whether a resource ID matches the filter.
-func (rtf TypeFilter) matchID(id string) bool {
+func (rtf Filter) matchID(id string) bool {
 	if rtf.ID == nil {
 		return true
 	}
@@ -112,7 +76,7 @@ func (rtf TypeFilter) matchID(id string) bool {
 
 // MatchesTags checks whether a resource's tags
 // match the filter. The keys must match exactly, whereas the tag value is checked against a regex.
-func (rtf TypeFilter) matchTags(tags map[string]string) bool {
+func (rtf Filter) matchTags(tags map[string]string) bool {
 	if rtf.Tags == nil {
 		return true
 	}
@@ -133,7 +97,7 @@ func (rtf TypeFilter) matchTags(tags map[string]string) bool {
 	return true
 }
 
-func (rtf TypeFilter) matchCreated(creationTime *time.Time) bool {
+func (rtf Filter) matchCreated(creationTime *time.Time) bool {
 	if rtf.Created == nil {
 		return true
 	}
@@ -155,7 +119,7 @@ func (rtf TypeFilter) matchCreated(creationTime *time.Time) bool {
 	return createdAfter && createdBefore
 }
 
-func (rtf TypeFilter) matchAge(creationTime *time.Time) bool {
+func (rtf Filter) matchAge(creationTime *time.Time) bool {
 	if rtf.Age == nil {
 		return true
 	}
@@ -179,17 +143,17 @@ func (rtf TypeFilter) matchAge(creationTime *time.Time) bool {
 }
 
 // matches checks whether a resource matches the filter criteria.
-func (f Filter) matches(r *Resource) bool {
-	resTypeFilters, found := f.Cfg[r.Type]
+func (f Filters) matches(r *Resource) bool {
+	resFilters, found := f[r.Type]
 	if !found {
 		return false
 	}
 
-	if len(resTypeFilters) == 0 {
+	if len(resFilters) == 0 {
 		return true
 	}
 
-	for _, rtf := range resTypeFilters {
+	for _, rtf := range resFilters {
 		if rtf.matchTags(r.Tags) && rtf.matchID(r.ID) && rtf.matchCreated(r.Created) && rtf.matchAge(r.Created) {
 			return true
 		}

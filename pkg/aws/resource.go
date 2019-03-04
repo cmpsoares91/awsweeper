@@ -1,17 +1,35 @@
-package resource
+package aws
 
 import (
+	"encoding/json"
+	"fmt"
 	"reflect"
 	"time"
 
 	"github.com/sirupsen/logrus"
+	yaml "gopkg.in/yaml.v2"
 
+	"github.com/iflix/awsweeper/pkg/terraform"
 	"github.com/pkg/errors"
 )
 
+// Resources is a list of AWS resources.
+type Resources []*Resource
+
+// Resource contains information about a single AWS resource that can be deleted by Terraform.
+type Resource struct {
+	Type terraform.ResourceType
+	// ID by which the resource can be deleted (in some cases the ID is the resource's name, but not always;
+	// that's why we need the deleteIDs map)
+	ID      string
+	Tags    map[string]string
+	Created *time.Time
+	Attrs   map[string]string
+}
+
 // Resources converts given raw resources for a given resource type
 // into a format that can be deleted by the Terraform API.
-func DeletableResources(resType TerraformResourceType, resources interface{}) (Resources, error) {
+func DeletableResources(resType terraform.ResourceType, resources interface{}) (Resources, error) {
 	deletableResources := Resources{}
 	reflectResources := reflect.ValueOf(resources)
 
@@ -94,4 +112,44 @@ func findTags(res reflect.Value) (map[string]string, error) {
 	}
 
 	return tags, nil
+}
+
+func (resources Resources) ToJson() (string, error) {
+	b, err := json.Marshal(resources)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
+}
+
+func (resources Resources) ToYaml() (string, error) {
+	b, err := yaml.Marshal(resources)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
+}
+
+func (resources Resources) ToString() (string, error) {
+	printStat := ""
+	for _, r := range resources {
+		printStat += fmt.Sprintf("\tId:\t\t%s", r.ID)
+		if r.Tags != nil {
+			if len(r.Tags) > 0 {
+				printStat += "\n\tTags:\t\t"
+				for k, v := range r.Tags {
+					printStat += fmt.Sprintf("[%s: %v] ", k, v)
+				}
+			}
+		}
+		printStat += "\n"
+		if r.Created != nil {
+			printStat += fmt.Sprintf("\tCreated:\t%s", r.Created)
+			printStat += "\n"
+		}
+	}
+
+	return printStat, nil
 }
