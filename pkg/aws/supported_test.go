@@ -1,4 +1,4 @@
-package resource_test
+package aws_test
 
 import (
 	"testing"
@@ -7,9 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/autoscaling"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/iflix/awsweeper/resource"
-	"github.com/iflix/awsweeper/resource/mocks"
 	"github.com/golang/mock/gomock"
+	"github.com/iflix/awsweeper/resource"
+	// "github.com/iflix/awsweeper/resource/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

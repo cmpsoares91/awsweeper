@@ -19,7 +19,7 @@ aws_instance:
   - tags:
       Name: foo
   - age:
-      before: 168h
+      older_than: 168h
 aws_internet_gateway:
   - tags:
       Name: foo
