@@ -26,8 +26,8 @@ type Created struct {
 }
 
 type Age struct {
-	Before *time.Duration `yaml:",omitempty"`
-	After  *time.Duration `yaml:",omitempty"`
+	OlderThan   *time.Duration `yaml:"older_than,omitempty"`
+	YoungerThan *time.Duration `yaml:"younger_than,omitempty"`
 }
 
 // Filters selects resources based on a given yaml config.
@@ -130,13 +130,13 @@ func (rtf Filter) matchAge(creationTime *time.Time) bool {
 
 	now := time.Now()
 	createdAfter := true
-	if rtf.Age.After != nil {
-		createdAfter = creationTime.Unix() > now.Add(-*rtf.Age.After).Unix()
+	if rtf.Age.YoungerThan != nil {
+		createdAfter = creationTime.Unix() > now.Add(-*rtf.Age.YoungerThan).Unix()
 	}
 
 	createdBefore := true
-	if rtf.Age.Before != nil {
-		createdBefore = creationTime.Unix() < now.Add(-*rtf.Age.Before).Unix()
+	if rtf.Age.OlderThan != nil {
+		createdBefore = creationTime.Unix() < now.Add(-*rtf.Age.OlderThan).Unix()
 	}
 
 	return createdAfter && createdBefore

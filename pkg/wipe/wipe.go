@@ -55,11 +55,9 @@ func (c *Wiper) Run() (aws.Resources, error) {
 		filteredRes := c.Filters.Apply(resType, deletableResources, rawResources, c.Client)
 		resourcesToWipe = append(resourcesToWipe, filteredRes...)
 
-		// if c.DryRun == false {
-		// 	for _, res := range filteredRes {
-		// 		c.wipe(res)
-		// 	}
-		// }
+		if c.DryRun == false {
+			c.wipe(filteredRes)
+		}
 	}
 
 	return resourcesToWipe, nil
@@ -75,10 +73,6 @@ func (c *Wiper) wipe(res aws.Resources) {
 		return
 	}
 
-	instanceInfo := &terraform.InstanceInfo{
-		Type: string(res[0].Type),
-	}
-
 	instanceDiff := &terraform.InstanceDiff{
 		Destroy: true,
 	}
@@ -92,12 +86,16 @@ func (c *Wiper) wipe(res aws.Resources) {
 		go func() {
 			for {
 				r, more := <-chResources
+
 				if more {
 					// dirty hack to fix aws_key_pair
 					if r.Attrs == nil {
 						r.Attrs = map[string]string{"public_key": ""}
 					}
 
+					instanceInfo := &terraform.InstanceInfo{
+						Type: string(r.Type),
+					}
 					s := &terraform.InstanceState{
 						ID:         r.ID,
 						Attributes: r.Attrs,
