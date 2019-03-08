@@ -36,7 +36,7 @@ func main() {
 		DryRun:   true,
 		Client:   client,
 		Provider: provider,
-		Filters:  &config,
+		Filters:  config,
 	}
 
 	resources, err := wiper.Run()

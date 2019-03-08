@@ -13,7 +13,7 @@ var AppFs = afero.NewOsFs()
 type Config = aws.Filters
 
 // Load will read yaml config file and returns its value as config type
-func Load(filename string) (Config, error) {
+func Load(filename string) (*Config, error) {
 	var cfg Config
 
 	data, err := afero.ReadFile(AppFs, filename)
@@ -26,5 +26,5 @@ func Load(filename string) (Config, error) {
 		return nil, err
 	}
 
-	return cfg, nil
+	return &cfg, nil
 }
