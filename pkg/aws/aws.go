@@ -167,6 +167,10 @@ func NewClient(conf *Config) (*API, error) {
 	s, err := session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 		Profile:           conf.Profile,
+		Config: aws.Config{
+			Region:     aws.String(conf.Region),
+			MaxRetries: aws.Int(conf.MaxRetries),
+		},
 	})
 
 	if err != nil {
