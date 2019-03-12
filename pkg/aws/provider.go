@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/aws/aws-sdk-go/aws"
 	tfConfig "github.com/hashicorp/terraform/config"
 	tf "github.com/hashicorp/terraform/terraform"
 	"github.com/sirupsen/logrus"
-	"github.com/terraform-providers/terraform-provider-aws/aws"
+	tfAws "github.com/terraform-providers/terraform-provider-aws/aws"
 )
 
 func CreateProvider(config *aws.Config) (*tf.ResourceProvider, error) {
-	p := aws.Provider()
+	p := tfAws.Provider()
 
 	cfg := map[string]interface{}{
 		"region":      config.Region,
-		"profile":     config.Profile,
 		"max_retries": config.MaxRetries,
 	}
 

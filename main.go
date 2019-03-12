@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	amazon "github.com/aws/aws-sdk-go/aws"
 	"github.com/iflix/awsweeper/pkg/aws"
 	"github.com/iflix/awsweeper/pkg/config"
 	"github.com/iflix/awsweeper/pkg/wipe"
@@ -16,10 +17,9 @@ func main() {
 		logrus.WithError(err).Fatal("Failed to open config file")
 	}
 
-	awsConf := &aws.Config{
-		Region:     "ap-southeast-1",
-		Profile:    "",
-		MaxRetries: 1,
+	awsConf := &amazon.Config{
+		Region:     amazon.String("ap-southeast-1"),
+		MaxRetries: amazon.Int(1),
 	}
 
 	provider, err := aws.CreateProvider(awsConf)
