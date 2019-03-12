@@ -10,13 +10,13 @@ import (
 	"github.com/terraform-providers/terraform-provider-aws/aws"
 )
 
-func CreateProvider(awsConfig *Config) (*tf.ResourceProvider, error) {
+func CreateProvider(config *aws.Config) (*tf.ResourceProvider, error) {
 	p := aws.Provider()
 
 	cfg := map[string]interface{}{
-		"region":      awsConfig.Region,
-		"profile":     awsConfig.Profile,
-		"max_retries": awsConfig.MaxRetries,
+		"region":      config.Region,
+		"profile":     config.Profile,
+		"max_retries": config.MaxRetries,
 	}
 
 	rc, err := tfConfig.NewRawConfig(cfg)
