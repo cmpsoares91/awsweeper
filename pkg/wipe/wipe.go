@@ -22,18 +22,19 @@ type Wiper struct {
 	Filters  *config.Config
 }
 
-func (c *Wiper) Run() (aws.Resources, error) {
+func (c *Wiper) Run() (aws.Resources, []error, error) {
+	var warnings []error
 	err := c.Filters.Validate()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if c.Client == nil {
-		return nil, fmt.Errorf("AWS Client is required")
+		return nil, warnings, fmt.Errorf("AWS Client is required")
 	}
 
 	if c.Provider == nil {
-		return nil, fmt.Errorf("Provider is required")
+		return nil, warnings, fmt.Errorf("Provider is required")
 	}
 
 	if c.DryRun {
@@ -42,25 +43,23 @@ func (c *Wiper) Run() (aws.Resources, error) {
 
 	var resourcesToWipe = aws.Resources{}
 	for _, resType := range c.Filters.Types() {
-		rawResources, err := c.Client.RawResources(resType)
-		if err != nil {
-			return nil, err
-		}
+		if rawResources, err := c.Client.RawResources(resType); err != nil {
+			warnings = append(warnings, err)
+		} else {
+			if deletableResources, err := aws.DeletableResources(resType, rawResources); err != nil {
+				warnings = append(warnings, err)
+			} else {
+				filteredRes := c.Filters.Apply(resType, deletableResources, rawResources, c.Client)
+				resourcesToWipe = append(resourcesToWipe, filteredRes...)
 
-		deletableResources, err := aws.DeletableResources(resType, rawResources)
-		if err != nil {
-			return nil, err
-		}
-
-		filteredRes := c.Filters.Apply(resType, deletableResources, rawResources, c.Client)
-		resourcesToWipe = append(resourcesToWipe, filteredRes...)
-
-		if c.DryRun == false {
-			c.wipe(filteredRes)
+				if c.DryRun == false {
+					c.wipe(filteredRes)
+				}
+			}
 		}
 	}
 
-	return resourcesToWipe, nil
+	return resourcesToWipe, warnings, nil
 }
 
 // wipe does the actual deletion (in parallel) of a given (filtered) list of AWS resources.

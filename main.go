@@ -39,9 +39,13 @@ func main() {
 		Filters:  config,
 	}
 
-	resources, err := wiper.Run()
+	resources, warnings, err := wiper.Run()
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to wipe resources")
+	}
+
+	if len(warnings) > 0 {
+		logrus.WithField("Warnings:", warnings).Warn("Unable to perform as expected because of these warnings")
 	}
 
 	fmt.Println(resources.ToJson())
