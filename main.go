@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	amazon "github.com/aws/aws-sdk-go/aws"
 	"github.com/iflix/awsweeper/pkg/aws"
@@ -32,11 +33,13 @@ func main() {
 		logrus.WithError(err).Fatal("Failed to create aws API client")
 	}
 
+	timeShift, _ := time.ParseDuration("24h")
 	wiper := wipe.Wiper{
-		DryRun:   true,
-		Client:   client,
-		Provider: provider,
-		Filters:  config,
+		DryRun:    true,
+		Client:    client,
+		Provider:  provider,
+		Filters:   config,
+		TimeShift: &timeShift,
 	}
 
 	resources, warnings, err := wiper.Run()

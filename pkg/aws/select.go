@@ -3,6 +3,7 @@ package aws
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/efs"
@@ -14,43 +15,43 @@ import (
 // here is where the filtering of resources happens, i.e.
 // the filter entry in the config for a certain resource type
 // is applied to all resources of that type.
-func (f Filters) Apply(resType terraform.ResourceType, res Resources, raw interface{}, api *API) Resources {
+func (f Filters) Apply(resType terraform.ResourceType, res Resources, raw interface{}, api *API, timeShift *time.Duration) Resources {
 	switch resType {
 	case EfsFileSystem:
-		return f.efsFileSystemFilter(res, raw, api)
+		return f.efsFileSystemFilter(res, timeShift, raw, api)
 	case IamUser:
-		return f.iamUserFilter(res, api)
+		return f.iamUserFilter(res, timeShift, api)
 	case IamPolicy:
-		return f.iamPolicyFilter(res, raw, api)
+		return f.iamPolicyFilter(res, timeShift, raw, api)
 	case KmsKey:
-		return f.kmsKeysFilter(res, api)
+		return f.kmsKeysFilter(res, timeShift, api)
 	case KmsAlias:
-		return f.kmsKeyAliasFilter(res)
+		return f.kmsKeyAliasFilter(res, timeShift)
 	default:
-		return f.defaultFilter(res)
+		return f.defaultFilter(res, timeShift)
 	}
 }
 
 // For most resource types, this default filter method can be used.
 // However, for some resource types additional information need to be queried from the AWS API. Filtering for those
 // is handled in special functions below.
-func (f Filters) defaultFilter(res Resources) Resources {
+func (f Filters) defaultFilter(res Resources, timeShift *time.Duration) Resources {
 	result := Resources{}
 
 	for _, r := range res {
-		if f.matches(r) {
+		if f.matches(r, timeShift) {
 			result = append(result, r)
 		}
 	}
 	return result
 }
 
-func (f Filters) efsFileSystemFilter(res Resources, raw interface{}, c *API) Resources {
+func (f Filters) efsFileSystemFilter(res Resources, timeShift *time.Duration, raw interface{}, c *API) Resources {
 	result := Resources{}
 	resultMt := Resources{}
 
 	for _, r := range res {
-		if f.matches(&Resource{Type: r.Type, ID: *raw.([]*efs.FileSystemDescription)[0].Name}) {
+		if f.matches(&Resource{Type: r.Type, ID: *raw.([]*efs.FileSystemDescription)[0].Name}, timeShift) {
 			res, err := c.DescribeMountTargets(&efs.DescribeMountTargetsInput{
 				FileSystemId: &r.ID,
 			})
@@ -70,13 +71,13 @@ func (f Filters) efsFileSystemFilter(res Resources, raw interface{}, c *API) Res
 	return append(resultMt, result...)
 }
 
-func (f Filters) iamUserFilter(res Resources, c *API) Resources {
+func (f Filters) iamUserFilter(res Resources, timeShift *time.Duration, c *API) Resources {
 	result := Resources{}
 	resultAttPol := Resources{}
 	resultUserPol := Resources{}
 
 	for _, r := range res {
-		if f.matches(r) {
+		if f.matches(r, timeShift) {
 			// list inline policies, delete with "aws_iam_user_policy" delete routine
 			ups, err := c.ListUserPolicies(&iam.ListUserPoliciesInput{
 				UserName: &r.ID,
@@ -115,12 +116,12 @@ func (f Filters) iamUserFilter(res Resources, c *API) Resources {
 	return append(x, result...)
 }
 
-func (f Filters) iamPolicyFilter(res Resources, raw interface{}, c *API) Resources {
+func (f Filters) iamPolicyFilter(res Resources, timeShift *time.Duration, raw interface{}, c *API) Resources {
 	result := Resources{}
 	resultAtt := Resources{}
 
 	for i, r := range res {
-		if f.matches(r) {
+		if f.matches(r, timeShift) {
 			es, err := c.ListEntitiesForPolicy(&iam.ListEntitiesForPolicyInput{
 				PolicyArn: &r.ID,
 			})
@@ -161,11 +162,11 @@ func (f Filters) iamPolicyFilter(res Resources, raw interface{}, c *API) Resourc
 	return append(resultAtt, result...)
 }
 
-func (f Filters) kmsKeysFilter(res Resources, c *API) Resources {
+func (f Filters) kmsKeysFilter(res Resources, timeShift *time.Duration, c *API) Resources {
 	result := Resources{}
 
 	for _, r := range res {
-		if f.matches(r) {
+		if f.matches(r, timeShift) {
 			req, res := c.DescribeKeyRequest(&kms.DescribeKeyInput{
 				KeyId: aws.String(r.ID),
 			})
@@ -184,11 +185,11 @@ func (f Filters) kmsKeysFilter(res Resources, c *API) Resources {
 	return result
 }
 
-func (f Filters) kmsKeyAliasFilter(res Resources) Resources {
+func (f Filters) kmsKeyAliasFilter(res Resources, timeShift *time.Duration) Resources {
 	result := Resources{}
 
 	for _, r := range res {
-		if f.matches(r) && !strings.HasPrefix(r.ID, "alias/aws/") {
+		if f.matches(r, timeShift) && !strings.HasPrefix(r.ID, "alias/aws/") {
 			result = append(result, r)
 		}
 	}

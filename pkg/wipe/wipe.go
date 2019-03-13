@@ -3,6 +3,7 @@ package wipe
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"log"
 
@@ -16,10 +17,11 @@ import (
 //
 // It deletes selected AWS resources by a given filter
 type Wiper struct {
-	DryRun   bool
-	Client   *aws.API
-	Provider *terraform.ResourceProvider
-	Filters  *config.Config
+	DryRun    bool
+	Client    *aws.API
+	Provider  *terraform.ResourceProvider
+	Filters   *config.Config
+	TimeShift *time.Duration
 }
 
 func (c *Wiper) Run() (aws.Resources, []error, error) {
@@ -49,7 +51,7 @@ func (c *Wiper) Run() (aws.Resources, []error, error) {
 			if deletableResources, err := aws.DeletableResources(resType, rawResources); err != nil {
 				warnings = append(warnings, err)
 			} else {
-				filteredRes := c.Filters.Apply(resType, deletableResources, rawResources, c.Client)
+				filteredRes := c.Filters.Apply(resType, deletableResources, rawResources, c.Client, c.TimeShift)
 				resourcesToWipe = append(resourcesToWipe, filteredRes...)
 
 				if c.DryRun == false {

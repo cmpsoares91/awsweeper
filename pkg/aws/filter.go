@@ -124,7 +124,7 @@ func (rtf Filter) matchCreated(createdFilter *Created, creationTime *time.Time) 
 	return createdAfter && createdBefore
 }
 
-func (rtf Filter) matchAge(ageFilter *Age, creationTime *time.Time) bool {
+func (rtf Filter) matchAge(ageFilter *Age, creationTime *time.Time, timeShift *time.Duration) bool {
 	if ageFilter == nil {
 		return true
 	}
@@ -134,6 +134,11 @@ func (rtf Filter) matchAge(ageFilter *Age, creationTime *time.Time) bool {
 	}
 
 	now := time.Now()
+
+	if timeShift != nil {
+		now.Add(*timeShift)
+	}
+
 	createdAfter := true
 	if ageFilter.YoungerThan != nil {
 		createdAfter = creationTime.Unix() > now.Add(-*ageFilter.YoungerThan).Unix()
@@ -147,11 +152,11 @@ func (rtf Filter) matchAge(ageFilter *Age, creationTime *time.Time) bool {
 	return createdAfter && createdBefore
 }
 
-func (rtf Filter) match(r *Resource) bool {
+func (rtf Filter) match(r *Resource, timeShift *time.Duration) bool {
 	matchedID := rtf.matchID(rtf.ID, r.ID)
 	matchedTags := rtf.matchTags(rtf.Tags, r.Tags)
 	matchedCreated := rtf.matchCreated(rtf.Created, r.Created)
-	matchedAge := rtf.matchAge(rtf.Age, r.Created)
+	matchedAge := rtf.matchAge(rtf.Age, r.Created, timeShift)
 
 	if rtf.Not != nil {
 		if rtf.Not.ID != nil {
@@ -167,7 +172,7 @@ func (rtf Filter) match(r *Resource) bool {
 		}
 
 		if rtf.Not.Age != nil {
-			matchedAge = matchedAge && !rtf.matchAge(rtf.Not.Age, r.Created)
+			matchedAge = matchedAge && !rtf.matchAge(rtf.Not.Age, r.Created, timeShift)
 		}
 	}
 
@@ -178,7 +183,7 @@ func (rtf Filter) match(r *Resource) bool {
 }
 
 // matches checks whether a resource matches the filter criteria.
-func (f Filters) matches(r *Resource) bool {
+func (f Filters) matches(r *Resource, timeShift *time.Duration) bool {
 	resFilters, found := f[r.Type]
 	if !found {
 		return false
@@ -189,7 +194,7 @@ func (f Filters) matches(r *Resource) bool {
 	}
 
 	for _, rtf := range resFilters {
-		if rtf.match(r) {
+		if rtf.match(r, timeShift) {
 			return true
 		}
 	}
