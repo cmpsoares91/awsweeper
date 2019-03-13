@@ -1,47 +1,55 @@
 aws_autoscaling_group:
   - tags:
-      Name: foo
-    id: foo
+      - Name: foo
+    id:
+      - foo
 aws_eip:
 aws_elb:
-  - id: foo
+  - id:
+      - foo
 aws_iam_group:
-  - id: foo
+  - id:
+      - foo
 aws_iam_instance_profile:
-  - id: foo
+  - id:
+      - foo
 aws_iam_policy:
-  - id: foo
+  - id:
+      - foo
 aws_iam_role:
-  - id: foo
+  - id:
+      - foo
 aws_iam_user:
-  - id: foo
+  - id:
+      - foo
 aws_instance:
   - tags:
-      Name: foo
+      - Name: foo
   - age:
       older_than: 168h
 aws_internet_gateway:
   - tags:
-      Name: foo
+      - Name: foo
 aws_launch_configuration:
-  - id: foo
+  - id:
+      - foo
 aws_nat_gateway:
 aws_network_acl:
   - tags:
-      Name: foo
+      - Name: foo
 aws_network_interface:
   - tags:
-      Name: foo
+      - Name: foo
 aws_route_table:
   - tags:
-      Name: foo
+      - Name: foo
 aws_security_group:
   - tags:
-      Name: foo
+      - Name: foo
 aws_subnet:
   - tags:
-      Name: foo
+      - Name: foo
 aws_vpc:
   - tags:
-      Name: foo
+      - Name: foo
 aws_vpc_endpoint:

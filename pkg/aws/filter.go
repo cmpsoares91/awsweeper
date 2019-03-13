@@ -14,11 +14,14 @@ import (
 
 // Filter represents an entry in Config and selects the resources of a particular resource type.
 type Filter struct {
-	ID      *string           `yaml:",omitempty"`
-	Tags    map[string]string `yaml:",omitempty"`
-	Created *Created          `yaml:",omitempty"`
-	Age     *Age              `yaml:",omitempty"`
+	ID      *[]string `yaml:",omitempty"`
+	Tags    *Tags     `yaml:",omitempty"`
+	Created *Created  `yaml:",omitempty"`
+	Age     *Age      `yaml:",omitempty"`
+	Not     *Filter   `yaml:",omitempty`
 }
+
+type Tags []map[string]string
 
 type Created struct {
 	Before *time.Time `yaml:",omitempty"`
@@ -59,16 +62,18 @@ func (f Filters) Types() []terraform.ResourceType {
 }
 
 // MatchID checks whether a resource ID matches the filter.
-func (rtf Filter) matchID(id string) bool {
-	if rtf.ID == nil {
+func (rtf Filter) matchID(idsFilter *[]string, id string) bool {
+	if idsFilter == nil {
 		return true
 	}
 
-	if ok, err := regexp.MatchString(*rtf.ID, id); ok {
-		if err != nil {
-			log.Fatal(err)
+	for _, idFilter := range *idsFilter {
+		if ok, err := regexp.MatchString(idFilter, id); ok {
+			if err != nil {
+				log.Fatal(err)
+			}
+			return true
 		}
-		return true
 	}
 
 	return false
@@ -76,29 +81,29 @@ func (rtf Filter) matchID(id string) bool {
 
 // MatchesTags checks whether a resource's tags
 // match the filter. The keys must match exactly, whereas the tag value is checked against a regex.
-func (rtf Filter) matchTags(tags map[string]string) bool {
-	if rtf.Tags == nil {
+func (rtf Filter) matchTags(tagsFilter *Tags, tags map[string]string) bool {
+	if tagsFilter == nil {
 		return true
 	}
 
-	for cfgTagKey, regex := range rtf.Tags {
-		if tagVal, ok := tags[cfgTagKey]; ok {
-			if matched, err := regexp.MatchString(regex, tagVal); !matched {
-				if err != nil {
-					log.Fatal(err)
+	for _, tagFilter := range *tagsFilter {
+		for cfgTagKey, regex := range tagFilter {
+			if tagVal, ok := tags[cfgTagKey]; ok {
+				if matched, err := regexp.MatchString(regex, tagVal); matched {
+					if err != nil {
+						log.Fatal(err)
+					}
+					return true
 				}
-				return false
 			}
-		} else {
-			return false
 		}
 	}
 
-	return true
+	return false
 }
 
-func (rtf Filter) matchCreated(creationTime *time.Time) bool {
-	if rtf.Created == nil {
+func (rtf Filter) matchCreated(createdFilter *Created, creationTime *time.Time) bool {
+	if createdFilter == nil {
 		return true
 	}
 
@@ -107,20 +112,20 @@ func (rtf Filter) matchCreated(creationTime *time.Time) bool {
 	}
 
 	createdAfter := true
-	if rtf.Created.After != nil {
-		createdAfter = creationTime.Unix() > rtf.Created.After.Unix()
+	if createdFilter.After != nil {
+		createdAfter = creationTime.Unix() > createdFilter.After.Unix()
 	}
 
 	createdBefore := true
-	if rtf.Created.Before != nil {
-		createdBefore = creationTime.Unix() < rtf.Created.Before.Unix()
+	if createdFilter.Before != nil {
+		createdBefore = creationTime.Unix() < createdFilter.Before.Unix()
 	}
 
 	return createdAfter && createdBefore
 }
 
-func (rtf Filter) matchAge(creationTime *time.Time) bool {
-	if rtf.Age == nil {
+func (rtf Filter) matchAge(ageFilter *Age, creationTime *time.Time) bool {
+	if ageFilter == nil {
 		return true
 	}
 
@@ -130,16 +135,46 @@ func (rtf Filter) matchAge(creationTime *time.Time) bool {
 
 	now := time.Now()
 	createdAfter := true
-	if rtf.Age.YoungerThan != nil {
-		createdAfter = creationTime.Unix() > now.Add(-*rtf.Age.YoungerThan).Unix()
+	if ageFilter.YoungerThan != nil {
+		createdAfter = creationTime.Unix() > now.Add(-*ageFilter.YoungerThan).Unix()
 	}
 
 	createdBefore := true
-	if rtf.Age.OlderThan != nil {
-		createdBefore = creationTime.Unix() < now.Add(-*rtf.Age.OlderThan).Unix()
+	if ageFilter.OlderThan != nil {
+		createdBefore = creationTime.Unix() < now.Add(-*ageFilter.OlderThan).Unix()
 	}
 
 	return createdAfter && createdBefore
+}
+
+func (rtf Filter) match(r *Resource) bool {
+	matchedID := rtf.matchID(rtf.ID, r.ID)
+	matchedTags := rtf.matchTags(rtf.Tags, r.Tags)
+	matchedCreated := rtf.matchCreated(rtf.Created, r.Created)
+	matchedAge := rtf.matchAge(rtf.Age, r.Created)
+
+	if rtf.Not != nil {
+		if rtf.Not.ID != nil {
+			matchedID = matchedID && !rtf.matchID(rtf.Not.ID, r.ID)
+		}
+
+		if rtf.Not.Tags != nil {
+			matchedTags = matchedTags && !rtf.matchTags(rtf.Not.Tags, r.Tags)
+		}
+
+		if rtf.Not.Created != nil {
+			matchedCreated = matchedCreated && !rtf.matchCreated(rtf.Not.Created, r.Created)
+		}
+
+		if rtf.Not.Age != nil {
+			matchedAge = matchedAge && !rtf.matchAge(rtf.Not.Age, r.Created)
+		}
+	}
+
+	return matchedID &&
+		matchedTags &&
+		matchedCreated &&
+		matchedAge
 }
 
 // matches checks whether a resource matches the filter criteria.
@@ -154,7 +189,7 @@ func (f Filters) matches(r *Resource) bool {
 	}
 
 	for _, rtf := range resFilters {
-		if rtf.matchTags(r.Tags) && rtf.matchID(r.ID) && rtf.matchCreated(r.Created) && rtf.matchAge(r.Created) {
+		if rtf.match(r) {
 			return true
 		}
 	}

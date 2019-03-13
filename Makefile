@@ -17,7 +17,9 @@ generate:
 
 .PHONY: build
 build:
-	go build
+	@rm -rf ./bin
+	@mkdir bin
+	@go build -o ./bin/app
 
 .PHONY: generate
 test: generate
