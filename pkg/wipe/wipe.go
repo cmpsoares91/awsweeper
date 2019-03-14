@@ -111,6 +111,12 @@ func (c *Wiper) wipe(res aws.Resources) {
 					state.Attributes["force_detach_policies"] = "true"
 					state.Attributes["force_destroy"] = "true"
 
+					logrus.WithFields(logrus.Fields{
+						"instanceInfo": instanceInfo,
+						"state":        state,
+						"instanceDiff": instanceDiff,
+					}).Debug("Applying new state")
+
 					_, err = (*c.Provider).Apply(instanceInfo, state, instanceDiff)
 
 					if err != nil {
