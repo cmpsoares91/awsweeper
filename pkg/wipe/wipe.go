@@ -102,6 +102,11 @@ func (c *Wiper) wipe(res aws.Resources) {
 						Attributes: r.Attrs,
 					}
 
+					logrus.WithFields(logrus.Fields{
+						"instanceInfo": instanceInfo,
+						"state":        s,
+					}).Debug("Refreshing state")
+
 					state, err := (*c.Provider).Refresh(instanceInfo, s)
 					if err != nil {
 						log.Fatal(err)
