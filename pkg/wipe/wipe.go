@@ -5,8 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/iflix/awsweeper/pkg/aws"
 	"github.com/iflix/awsweeper/pkg/config"
@@ -113,11 +111,11 @@ func (c *Wiper) wipe(res aws.Resources) {
 					logrus.WithFields(logrus.Fields{
 						"instanceInfo": instanceInfo,
 						"state":        s,
-					}).Debug("Refreshing state")
+					}).Info("Refreshing state")
 
 					state, err := (*c.Provider).Refresh(instanceInfo, s)
 					if err != nil {
-						log.Fatal(err)
+						logrus.WithError(err).Fatal("Unable to refresh instance info")
 					}
 
 					// doesn't hurt to always add some force attributes
@@ -128,12 +126,12 @@ func (c *Wiper) wipe(res aws.Resources) {
 						"instanceInfo": instanceInfo,
 						"state":        state,
 						"instanceDiff": instanceDiff,
-					}).Debug("Applying new state")
+					}).Info("Applying new state")
 
 					_, err = (*c.Provider).Apply(instanceInfo, state, instanceDiff)
 
 					if err != nil {
-						logrus.Error(err)
+						logrus.WithError(err).Error("Unable to apply new state")
 					}
 					wg.Done()
 				} else {
