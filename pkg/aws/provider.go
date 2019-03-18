@@ -25,12 +25,15 @@ func CreateProvider(config *aws.Config, roleToAssume string) (*tf.ResourceProvid
 		},
 	}
 
-	if creds, err := config.Credentials.Get(); err != nil {
-		cfg["access_key"] = creds.AccessKeyID
-		cfg["secret_key"] = creds.SecretAccessKey
-		cfg["token"] = creds.SessionToken
-	} else {
-		logrus.WithError(err).Warn("Unable to get credentials from config")
+	if config.Credentials != nil {
+		logrus.Debug("Using provided credentials")
+		if creds, err := config.Credentials.Get(); err != nil {
+			cfg["access_key"] = creds.AccessKeyID
+			cfg["secret_key"] = creds.SecretAccessKey
+			cfg["token"] = creds.SessionToken
+		} else {
+			logrus.WithError(err).Warn("Unable to get credentials from config")
+		}
 	}
 
 	rc, err := tfConfig.NewRawConfig(cfg)
