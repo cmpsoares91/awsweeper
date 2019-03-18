@@ -11,11 +11,18 @@ import (
 	tfAws "github.com/terraform-providers/terraform-provider-aws/aws"
 )
 
-func CreateProvider(config *aws.Config) (*tf.ResourceProvider, error) {
+func CreateProvider(config *aws.Config, roleToAssume string) (*tf.ResourceProvider, error) {
 	p := tfAws.Provider()
+
 	cfg := map[string]interface{}{
 		"region":      config.Region,
 		"max_retries": config.MaxRetries,
+		"assume_role": []map[string]interface{}{
+			map[string]interface{}{
+				"role_arn":     roleToAssume,
+				"session_name": "awsweeper",
+			},
+		},
 	}
 
 	if creds, err := config.Credentials.Get(); err != nil {

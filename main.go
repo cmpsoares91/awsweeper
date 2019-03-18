@@ -23,7 +23,8 @@ func main() {
 		MaxRetries: amazon.Int(1),
 	}
 
-	provider, err := aws.CreateProvider(awsConf)
+	roleToAssume := ""
+	provider, err := aws.CreateProvider(awsConf, roleToAssume)
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to create aws provider")
 	}
