@@ -13,10 +13,17 @@ import (
 
 func CreateProvider(config *aws.Config) (*tf.ResourceProvider, error) {
 	p := tfAws.Provider()
-
 	cfg := map[string]interface{}{
 		"region":      config.Region,
 		"max_retries": config.MaxRetries,
+	}
+
+	if creds, err := config.Credentials.Get(); err != nil {
+		cfg["access_key"] = creds.AccessKeyID
+		cfg["secret_key"] = creds.SecretAccessKey
+		cfg["token"] = creds.SessionToken
+	} else {
+		logrus.WithError(err).Warn("Unable to get credentials from config")
 	}
 
 	rc, err := tfConfig.NewRawConfig(cfg)
