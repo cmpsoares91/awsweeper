@@ -69,7 +69,7 @@ func (c *Wiper) Run() (aws.Resources, []error, error) {
 // It takes advantage of the AWS terraform provider by using its delete functions
 // (so we get retries, detaching of policies from some IAM resources before deletion, and other stuff for free).
 func (c *Wiper) wipe(res aws.Resources) {
-	numWorkerThreads := 1
+	numWorkerThreads := 5
 
 	if len(res) == 0 {
 		return
@@ -78,7 +78,7 @@ func (c *Wiper) wipe(res aws.Resources) {
 	logrus.WithFields(logrus.Fields{
 		"numWorkerThreads": numWorkerThreads,
 		"resources":        res,
-	}).Info("Going to wipe some resources")
+	}).Debug("Going to wipe some resources")
 
 	instanceDiff := &terraform.InstanceDiff{
 		Destroy: true,
@@ -111,7 +111,7 @@ func (c *Wiper) wipe(res aws.Resources) {
 					logrus.WithFields(logrus.Fields{
 						"instanceInfo": instanceInfo,
 						"state":        s,
-					}).Info("Refreshing state")
+					}).Debug("Refreshing state")
 
 					state, err := (*c.Provider).Refresh(instanceInfo, s)
 					if err != nil {
@@ -126,7 +126,7 @@ func (c *Wiper) wipe(res aws.Resources) {
 						"instanceInfo": instanceInfo,
 						"state":        state,
 						"instanceDiff": instanceDiff,
-					}).Info("Applying new state")
+					}).Debug("Applying new state")
 
 					_, err = (*c.Provider).Apply(instanceInfo, state, instanceDiff)
 

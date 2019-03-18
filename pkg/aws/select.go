@@ -10,17 +10,12 @@ import (
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/iflix/awsweeper/pkg/terraform"
-	"github.com/sirupsen/logrus"
 )
 
 // here is where the filtering of resources happens, i.e.
 // the filter entry in the config for a certain resource type
 // is applied to all resources of that type.
 func (f Filters) Apply(resType terraform.ResourceType, res Resources, raw interface{}, api *API, timeShift *time.Duration) Resources {
-	logrus.WithFields(logrus.Fields{
-		"resType": resType,
-		"res":     res,
-	}).Info("Applying filters to resources")
 	switch resType {
 	case EfsFileSystem:
 		return f.efsFileSystemFilter(res, timeShift, raw, api)
