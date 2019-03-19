@@ -1,0 +1,20 @@
+aws_instance:
+  - age:
+      older_than: 168h
+    not:
+      id:
+        - i-0e953265d868e98d1 # jumpbox PE
+        - i-0c403aa6e9623d8bf # Anne-backend-CVE
+        - i-00abcceee82608461 # ANNE-FRONTEND-CVE
+
+
+# aws_instance:
+#   - tags:
+#       - iflix:team: data|pe
+#       - Name: rahman
+#     not:
+#       id: (i-03a9e046e3e53e22f|i-045fc6eb96f63b79d)
+#       tags:
+#         - Person: Sheldon
+#           Owner: Sheldon
+#           Creator: Sheldon
