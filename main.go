@@ -19,8 +19,9 @@ func main() {
 	}
 
 	awsConf := &amazon.Config{
-		Region:     amazon.String("ap-southeast-1"),
-		MaxRetries: amazon.Int(1),
+		Region:           amazon.String("ap-southeast-1"),
+		MaxRetries:       amazon.Int(1),
+		S3ForcePathStyle: amazon.Bool(true),
 	}
 
 	roleToAssume := ""

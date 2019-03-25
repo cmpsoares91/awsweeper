@@ -15,8 +15,9 @@ func CreateProvider(config *aws.Config, roleToAssume string) (*tf.ResourceProvid
 	p := tfAws.Provider()
 
 	cfg := map[string]interface{}{
-		"region":      config.Region,
-		"max_retries": config.MaxRetries,
+		"region":              config.Region,
+		"max_retries":         config.MaxRetries,
+		"s3_force_path_style": config.S3ForcePathStyle,
 		"assume_role": []map[string]interface{}{
 			map[string]interface{}{
 				"role_arn":     roleToAssume,
