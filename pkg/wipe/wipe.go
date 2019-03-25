@@ -80,8 +80,7 @@ func (c *Wiper) wipe(res aws.Resources) {
 		"resources":        res,
 	}).Debug("Going to wipe some resources")
 
-	instanceDiff := &terraform.InstanceDiff{
-		Destroy: true,
+	deletePreprationDiff := &terraform.InstanceDiff{
 		Attributes: map[string]*terraform.ResourceAttrDiff{
 			"disable_api_termination": &terraform.ResourceAttrDiff{
 				Old:        "true",
@@ -89,6 +88,10 @@ func (c *Wiper) wipe(res aws.Resources) {
 				NewRemoved: false,
 			},
 		},
+	}
+
+	instanceDiff := &terraform.InstanceDiff{
+		Destroy: true,
 	}
 
 	chResources := make(chan *aws.Resource, numWorkerThreads)
@@ -134,6 +137,11 @@ func (c *Wiper) wipe(res aws.Resources) {
 						"state":        state,
 						"instanceDiff": instanceDiff,
 					}).Debug("Applying new state")
+
+					_, err = (*c.Provider).Apply(instanceInfo, state, deletePreprationDiff)
+					if err != nil {
+						logrus.WithError(err).Warn("Failed to apply prepration diff")
+					}
 
 					_, err = (*c.Provider).Apply(instanceInfo, state, instanceDiff)
 
