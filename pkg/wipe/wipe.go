@@ -82,6 +82,13 @@ func (c *Wiper) wipe(res aws.Resources) {
 
 	instanceDiff := &terraform.InstanceDiff{
 		Destroy: true,
+		Attributes: map[string]*terraform.ResourceAttrDiff{
+			"disable_api_termination": &terraform.ResourceAttrDiff{
+				Old:        "true",
+				New:        "false",
+				NewRemoved: false,
+			},
+		},
 	}
 
 	chResources := make(chan *aws.Resource, numWorkerThreads)
@@ -121,7 +128,6 @@ func (c *Wiper) wipe(res aws.Resources) {
 					// doesn't hurt to always add some force attributes
 					state.Attributes["force_detach_policies"] = "true"
 					state.Attributes["force_destroy"] = "true"
-					state.Attributes["disable_api_termination"] = "false"
 
 					logrus.WithFields(logrus.Fields{
 						"instanceInfo": instanceInfo,
