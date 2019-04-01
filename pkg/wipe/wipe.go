@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/iflix/awsweeper/pkg/aws"
 	"github.com/iflix/awsweeper/pkg/config"
@@ -105,6 +106,7 @@ func (c *Wiper) wipe(res aws.Resources) {
 				r, more := <-chResources
 
 				if more {
+					defer wg.Done()
 					// dirty hack to fix aws_key_pair
 					if r.Attrs == nil {
 						r.Attrs = map[string]string{"public_key": ""}
@@ -125,6 +127,13 @@ func (c *Wiper) wipe(res aws.Resources) {
 
 					state, err := (*c.Provider).Refresh(instanceInfo, s)
 					if err != nil {
+						if awsErr, ok := err.(awserr.Error); ok {
+							if awsErr.Code() == "BucketRegionError" {
+								logrus.WithError(err).Info("Bucket exists in different region. Ignoring the error")
+								return
+							}
+						}
+
 						logrus.WithError(err).Fatal("Unable to refresh instance info")
 					}
 
@@ -148,7 +157,6 @@ func (c *Wiper) wipe(res aws.Resources) {
 					if err != nil {
 						logrus.WithError(err).Error("Unable to apply new state")
 					}
-					wg.Done()
 				} else {
 					return
 				}
