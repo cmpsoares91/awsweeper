@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/iflix/awsweeper/pkg/aws"
 	"github.com/iflix/awsweeper/pkg/config"
@@ -127,14 +126,8 @@ func (c *Wiper) wipe(res aws.Resources) {
 
 					state, err := (*c.Provider).Refresh(instanceInfo, s)
 					if err != nil {
-						if awsErr, ok := err.(awserr.Error); ok {
-							if awsErr.Code() == "BucketRegionError" {
-								logrus.WithError(err).Info("Bucket exists in different region. Ignoring the error")
-								return
-							}
-						}
-
-						logrus.WithError(err).Fatal("Unable to refresh instance info")
+						logrus.WithError(err).Warn("Unable to refresh instance info")
+						return
 					}
 
 					// doesn't hurt to always add some force attributes
