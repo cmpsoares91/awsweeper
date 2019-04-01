@@ -3,7 +3,7 @@ module github.com/iflix/awsweeper
 go 1.12
 
 require (
-	github.com/aws/aws-sdk-go v1.19.6
+	github.com/aws/aws-sdk-go v1.17.0
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/go-errors/errors v1.0.1
 	github.com/golang/mock v1.2.0
