@@ -105,7 +105,6 @@ func (c *Wiper) wipe(res aws.Resources) {
 				r, more := <-chResources
 
 				if more {
-					defer wg.Done()
 					// dirty hack to fix aws_key_pair
 					if r.Attrs == nil {
 						r.Attrs = map[string]string{"public_key": ""}
@@ -127,29 +126,29 @@ func (c *Wiper) wipe(res aws.Resources) {
 					state, err := (*c.Provider).Refresh(instanceInfo, s)
 					if err != nil {
 						logrus.WithError(err).Warn("Unable to refresh instance info")
-						return
+					} else {
+						// doesn't hurt to always add some force attributes
+						state.Attributes["force_detach_policies"] = "true"
+						state.Attributes["force_destroy"] = "true"
+
+						logrus.WithFields(logrus.Fields{
+							"instanceInfo": instanceInfo,
+							"state":        state,
+							"instanceDiff": instanceDiff,
+						}).Debug("Applying new state")
+
+						_, err = (*c.Provider).Apply(instanceInfo, state, deletePreprationDiff)
+						if err != nil {
+							logrus.WithError(err).Warn("Failed to apply prepration diff")
+						}
+
+						_, err = (*c.Provider).Apply(instanceInfo, state, instanceDiff)
+
+						if err != nil {
+							logrus.WithError(err).Error("Unable to apply new state")
+						}
 					}
-
-					// doesn't hurt to always add some force attributes
-					state.Attributes["force_detach_policies"] = "true"
-					state.Attributes["force_destroy"] = "true"
-
-					logrus.WithFields(logrus.Fields{
-						"instanceInfo": instanceInfo,
-						"state":        state,
-						"instanceDiff": instanceDiff,
-					}).Debug("Applying new state")
-
-					_, err = (*c.Provider).Apply(instanceInfo, state, deletePreprationDiff)
-					if err != nil {
-						logrus.WithError(err).Warn("Failed to apply prepration diff")
-					}
-
-					_, err = (*c.Provider).Apply(instanceInfo, state, instanceDiff)
-
-					if err != nil {
-						logrus.WithError(err).Error("Unable to apply new state")
-					}
+					wg.Done()
 				} else {
 					return
 				}
