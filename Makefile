@@ -3,7 +3,7 @@ PKG_LIST := $(shell go list ./...)
 
 .PHONY: setup
 setup:
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.11
+	# curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.11
 	go get -u github.com/golang/mock/mockgen
 
 .PHONY: modules
