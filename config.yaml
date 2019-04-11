@@ -3,7 +3,8 @@ options:
   max-retries: 1
   s3-force-path-style: true
   regions:
-    - ap-southeast-1
+    - ap-southeast-2
+    - us-west-2
 
 filters:
   aws_firehose:

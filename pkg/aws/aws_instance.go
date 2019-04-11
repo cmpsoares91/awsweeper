@@ -23,7 +23,7 @@ func (a *InstanceAPI) getPriority() int64 {
 	return 9980
 }
 
-func (a *InstanceAPI) initAPI(s *session.Session) {
+func (a *InstanceAPI) new(s *session.Session) {
 	a.api = ec2.New(s)
 }
 

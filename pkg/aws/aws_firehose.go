@@ -21,7 +21,7 @@ func (a *FirehoseAPI) getPriority() int64 {
 	return -1
 }
 
-func (a *FirehoseAPI) initAPI(s *session.Session) {
+func (a *FirehoseAPI) new(s *session.Session) {
 	a.api = firehose.New(s)
 }
 

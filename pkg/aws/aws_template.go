@@ -21,7 +21,7 @@ func (a *XYZAPI) getPriority() int64 {
 	return -1
 }
 
-func (a *XYZAPI) initAPI(s *session.Session) {
+func (a *XYZAPI) new(s *session.Session) {
 	a.api = s3.New(s)
 }
 

@@ -3,9 +3,8 @@ module github.com/iflix/awsweeper
 go 1.12
 
 require (
-	github.com/aws/aws-sdk-go v1.17.0
+	github.com/aws/aws-sdk-go v1.19.11
 	github.com/kr/pretty v0.1.0 // indirect
-	github.com/mousavian/limiter v0.0.0-20190404032237-5a44444a4cd5
 	github.com/sirupsen/logrus v1.3.0
 	github.com/spf13/afero v1.2.1
 	github.com/stretchr/testify v1.3.0 // indirect

@@ -10,7 +10,7 @@ import (
 type ResourceType string
 
 type iResourceType interface {
-	initAPI(*session.Session)
+	new(*session.Session)
 	list() (IResources, error)
 	getType() ResourceType
 	getPriority() int64
@@ -30,9 +30,9 @@ func IsRegistered(resourceType ResourceType) bool {
 }
 
 // Register ...
-func Register(s *session.Session, r iResourceType) {
+func register(s *session.Session, r iResourceType) {
 	logrus.WithField("ResourceType", r.getType()).Debug("Registering new resource type")
-	r.initAPI(s)
+	r.new(s)
 	registeredResourceTypes[r.getType()] = r
 }
 

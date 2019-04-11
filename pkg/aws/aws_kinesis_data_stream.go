@@ -21,7 +21,7 @@ func (a *KinesisDataStreamAPI) getPriority() int64 {
 	return -1
 }
 
-func (a *KinesisDataStreamAPI) initAPI(s *session.Session) {
+func (a *KinesisDataStreamAPI) new(s *session.Session) {
 	a.api = kinesis.New(s)
 }
 

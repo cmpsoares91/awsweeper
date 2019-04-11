@@ -21,7 +21,7 @@ func (a *ElasticSearchDomainApi) getPriority() int64 {
 	return -1
 }
 
-func (a *ElasticSearchDomainApi) initAPI(s *session.Session) {
+func (a *ElasticSearchDomainApi) new(s *session.Session) {
 	a.api = elasticsearchservice.New(s)
 }
 

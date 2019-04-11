@@ -21,7 +21,7 @@ func (a *S3BucketAPI) getPriority() int64 {
 	return 9750
 }
 
-func (a *S3BucketAPI) initAPI(s *session.Session) {
+func (a *S3BucketAPI) new(s *session.Session) {
 	a.api = s3.New(s)
 }
 

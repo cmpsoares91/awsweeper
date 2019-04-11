@@ -17,10 +17,10 @@ func New(config *Config) {
 		fmt.Println(err)
 	}
 
-	Register(sess, &InstanceAPI{})
-	Register(sess, &S3BucketAPI{})
-	Register(sess, &DynamoDbTableApi{})
-	Register(sess, &ElasticSearchDomainApi{})
-	Register(sess, &KinesisDataStreamAPI{})
-	Register(sess, &FirehoseAPI{})
+	register(sess, &InstanceAPI{})
+	register(sess, &S3BucketAPI{})
+	register(sess, &DynamoDbTableApi{})
+	register(sess, &ElasticSearchDomainApi{})
+	register(sess, &KinesisDataStreamAPI{})
+	register(sess, &FirehoseAPI{})
 }
