@@ -15,13 +15,10 @@ func (c *Wiper) Run() (aws.IResources, []error, error) {
 	var warnings []error
 	var resourcesToWipe aws.IResources
 
+	logrus.WithField("DryMode", c.Config.Options.DryRun).Info()
 	for _, region := range c.Config.Options.Regions {
 		logrus.WithField("Region", region).Info()
-		aws.New(&aws.Config{
-			Region:           &region,
-			MaxRetries:       &c.Config.Options.MaxRetries,
-			S3ForcePathStyle: &c.Config.Options.S3ForcePathStyle,
-		})
+		aws.New(region, c.Config.Options.MaxRetries, c.Config.Options.RoleToAssume)
 
 		logrus.WithField("c.Config.Filters", c.Config.Filters).Info()
 		for resType, filters := range c.Config.Filters {
@@ -31,10 +28,9 @@ func (c *Wiper) Run() (aws.IResources, []error, error) {
 		logrus.WithField("Number of Resources", len(resourcesToWipe)).Info("Filtered resources")
 
 		if c.Config.Options.DryRun == false {
-			logrus.Info("DryRun mode is OFF")
 			c.wipe(resourcesToWipe)
 		} else {
-			logrus.Info("DryRun mode is ON. Skip deleting resources")
+			logrus.Info("Skip deleting resources because DryRun mode is ON")
 		}
 	}
 

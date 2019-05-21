@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/sirupsen/logrus"
@@ -21,8 +22,8 @@ func (a *DynamoDbTableApi) getPriority() int64 {
 	return 9710
 }
 
-func (a *DynamoDbTableApi) new(s *session.Session) {
-	a.api = dynamodb.New(s)
+func (a *DynamoDbTableApi) new(s *session.Session, cfg *aws.Config) {
+	a.api = dynamodb.New(s, cfg)
 }
 
 func (a *DynamoDbTableApi) listAll(lastEvaluatedTableName *string) (tables []*string, err error) {

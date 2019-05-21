@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/firehose"
 	"github.com/sirupsen/logrus"
@@ -21,8 +22,8 @@ func (a *FirehoseAPI) getPriority() int64 {
 	return -1
 }
 
-func (a *FirehoseAPI) new(s *session.Session) {
-	a.api = firehose.New(s)
+func (a *FirehoseAPI) new(s *session.Session, cfg *aws.Config) {
+	a.api = firehose.New(s, cfg)
 }
 
 func (a *FirehoseAPI) list() (resources IResources, err error) {

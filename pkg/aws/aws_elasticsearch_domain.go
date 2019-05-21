@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/elasticsearchservice"
 	"github.com/sirupsen/logrus"
@@ -21,8 +22,8 @@ func (a *ElasticSearchDomainApi) getPriority() int64 {
 	return -1
 }
 
-func (a *ElasticSearchDomainApi) new(s *session.Session) {
-	a.api = elasticsearchservice.New(s)
+func (a *ElasticSearchDomainApi) new(s *session.Session, cfg *aws.Config) {
+	a.api = elasticsearchservice.New(s, cfg)
 }
 
 func (a *ElasticSearchDomainApi) list() (resources IResources, err error) {

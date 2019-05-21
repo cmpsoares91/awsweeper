@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/sirupsen/logrus"
@@ -21,8 +22,8 @@ func (a *S3BucketAPI) getPriority() int64 {
 	return 9750
 }
 
-func (a *S3BucketAPI) new(s *session.Session) {
-	a.api = s3.New(s)
+func (a *S3BucketAPI) new(s *session.Session, cfg *aws.Config) {
+	a.api = s3.New(s, cfg)
 }
 
 func (a *S3BucketAPI) list() (resources IResources, err error) {

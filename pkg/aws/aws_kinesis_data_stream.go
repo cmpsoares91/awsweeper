@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/sirupsen/logrus"
@@ -21,8 +22,8 @@ func (a *KinesisDataStreamAPI) getPriority() int64 {
 	return -1
 }
 
-func (a *KinesisDataStreamAPI) new(s *session.Session) {
-	a.api = kinesis.New(s)
+func (a *KinesisDataStreamAPI) new(s *session.Session, cfg *aws.Config) {
+	a.api = kinesis.New(s, cfg)
 }
 
 func (a *KinesisDataStreamAPI) list() (resources IResources, err error) {

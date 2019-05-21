@@ -23,6 +23,7 @@ type Options struct {
 	MaxRetries       int      `yaml:"max-retries,omitempty"`
 	S3ForcePathStyle bool     `yaml:"s3-force-path-style,omitempty"`
 	Regions          []string `yaml:"regions"`
+	RoleToAssume     string   `yaml:"role-to-assume,omitempty"`
 }
 
 // Load will read yaml config file and returns its value as config type

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/sirupsen/logrus"
@@ -21,8 +22,8 @@ func (a *XYZAPI) getPriority() int64 {
 	return -1
 }
 
-func (a *XYZAPI) new(s *session.Session) {
-	a.api = s3.New(s)
+func (a *XYZAPI) new(s *session.Session, cfg *aws.Config) {
+	a.api = s3.New(s, cfg)
 }
 
 func (a *XYZAPI) list() (resources IResources, err error) {

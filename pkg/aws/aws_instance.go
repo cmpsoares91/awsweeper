@@ -23,8 +23,8 @@ func (a *InstanceAPI) getPriority() int64 {
 	return 9980
 }
 
-func (a *InstanceAPI) new(s *session.Session) {
-	a.api = ec2.New(s)
+func (a *InstanceAPI) new(s *session.Session, cfg *aws.Config) {
+	a.api = ec2.New(s, cfg)
 }
 
 func (a *InstanceAPI) list() (IResources, error) {
