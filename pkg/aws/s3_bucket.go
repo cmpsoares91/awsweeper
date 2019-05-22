@@ -15,7 +15,7 @@ type S3BucketAPI struct {
 }
 
 func (a *S3BucketAPI) getType() ResourceType {
-	return "aws_s3_bucket"
+	return "s3_bucket"
 }
 
 func (a *S3BucketAPI) getPriority() int64 {

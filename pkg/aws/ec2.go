@@ -10,24 +10,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// InstanceAPI ...
-type InstanceAPI struct {
+// EC2API ...
+type EC2API struct {
 	api *ec2.EC2
 }
 
-func (a *InstanceAPI) getType() ResourceType {
-	return "aws_instance"
+func (a *EC2API) getType() ResourceType {
+	return "ec2"
 }
 
-func (a *InstanceAPI) getPriority() int64 {
+func (a *EC2API) getPriority() int64 {
 	return 9980
 }
 
-func (a *InstanceAPI) new(s *session.Session, cfg *aws.Config) {
+func (a *EC2API) new(s *session.Session, cfg *aws.Config) {
 	a.api = ec2.New(s, cfg)
 }
 
-func (a *InstanceAPI) list() (IResources, error) {
+func (a *EC2API) list() (IResources, error) {
 	output, err := a.api.DescribeInstances(&ec2.DescribeInstancesInput{
 		Filters: []*ec2.Filter{
 			{

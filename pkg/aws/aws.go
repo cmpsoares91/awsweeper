@@ -26,7 +26,7 @@ func New(region string, maxRetries int, roleToAssume string) {
 		config.Credentials = stscreds.NewCredentials(sess, roleToAssume)
 	}
 
-	register(sess, config, &InstanceAPI{})
+	register(sess, config, &EC2API{})
 	register(sess, config, &S3BucketAPI{})
 	register(sess, config, &DynamoDbTableApi{})
 	register(sess, config, &ElasticSearchDomainApi{})

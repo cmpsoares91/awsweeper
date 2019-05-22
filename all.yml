@@ -1,5 +1,5 @@
-aws_firehose:
-aws_instance:
-aws_s3_bucket:
-aws_dynamodb_table:
-aws_elasticsearch_domain:
+firehose:
+ec2:
+s3_bucket:
+dynamodb_table:
+elasticsearch_domain:

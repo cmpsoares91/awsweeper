@@ -15,7 +15,7 @@ type DynamoDbTableApi struct {
 }
 
 func (a *DynamoDbTableApi) getType() ResourceType {
-	return "aws_dynamodb_table"
+	return "dynamodb_table"
 }
 
 func (a *DynamoDbTableApi) getPriority() int64 {

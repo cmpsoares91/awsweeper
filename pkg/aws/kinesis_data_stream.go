@@ -15,7 +15,7 @@ type KinesisDataStreamAPI struct {
 }
 
 func (a *KinesisDataStreamAPI) getType() ResourceType {
-	return "aws_kinesis_data_stream"
+	return "kinesis_data_stream"
 }
 
 func (a *KinesisDataStreamAPI) getPriority() int64 {

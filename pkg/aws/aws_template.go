@@ -15,7 +15,7 @@ type XYZAPI struct {
 }
 
 func (a *XYZAPI) getType() ResourceType {
-	return "aws_XYZ"
+	return "XYZ"
 }
 
 func (a *XYZAPI) getPriority() int64 {

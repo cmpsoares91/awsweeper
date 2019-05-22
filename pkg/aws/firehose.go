@@ -15,7 +15,7 @@ type FirehoseAPI struct {
 }
 
 func (a *FirehoseAPI) getType() ResourceType {
-	return "aws_firehose"
+	return "firehose"
 }
 
 func (a *FirehoseAPI) getPriority() int64 {

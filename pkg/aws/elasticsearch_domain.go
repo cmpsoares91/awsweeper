@@ -15,7 +15,7 @@ type ElasticSearchDomainApi struct {
 }
 
 func (a *ElasticSearchDomainApi) getType() ResourceType {
-	return "aws_elasticsearch_domain"
+	return "elasticsearch_domain"
 }
 
 func (a *ElasticSearchDomainApi) getPriority() int64 {
