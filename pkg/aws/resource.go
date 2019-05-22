@@ -2,7 +2,11 @@ package aws
 
 import (
 	"time"
+	"fmt"
 )
+
+// Region ...
+type Region = string
 
 // Resource ...
 type Resource struct {
@@ -18,7 +22,7 @@ type Resource struct {
 // Tags ...
 type Tags map[string]string
 
-// IResource
+// IResource ...
 type IResource interface {
 	GetID() *string
 	GetName() *string
@@ -31,3 +35,22 @@ type IResource interface {
 
 // IResources ...
 type IResources []IResource
+
+// IResourceTypeResources ...
+type IResourceTypeResources map[ResourceType]IResources
+
+// IRegionResourceTypeResources ...
+type IRegionResourceTypeResources map[Region]IResourceTypeResources
+
+func (rrtrs *IRegionResourceTypeResources) String() string {
+	output := ""
+	for region, rtrs := range *rrtrs {
+		for resourceType, resources := range rtrs {
+			for _, r := range resources {
+				output = output + fmt.Sprintf("- [%s][%s][%s] %s\n", region, resourceType, *r.GetID(), *r.GetName())
+			}
+		}
+	}
+
+	return output
+}
