@@ -54,3 +54,14 @@ func (rrtrs *IRegionResourceTypeResources) String() string {
 
 	return output
 }
+
+func (rrtrs *IRegionResourceTypeResources) Len() int {
+	counter := 0
+	for _, rtrs := range *rrtrs {
+		for _, resources := range rtrs {
+			counter += len(resources)
+		}
+	}
+
+	return counter
+}

@@ -28,7 +28,7 @@ func (c *Wiper) Run() (aws.IRegionResourceTypeResources, []error, error) {
 			resourcesToWipe[region][resType] = rs
 		}
 
-		logrus.WithField("Number of Resources", len(resourcesToWipe)).Info("Filtered resources")
+		logrus.WithField("Number of Resources", resourcesToWipe.Len()).Info("Filtered resources")
 
 		if c.Config.Options.DryRun == false {
 			c.wipe(resourcesToWipe)
