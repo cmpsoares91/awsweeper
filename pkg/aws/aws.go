@@ -33,4 +33,5 @@ func New(region string, maxRetries int, roleToAssume string) {
 	register(sess, config, &KinesisDataStreamAPI{})
 	register(sess, config, &FirehoseAPI{})
 	register(sess, config, &RDSInstanceAPI{})
+	register(sess, config, &RDSClusterAPI{})
 }

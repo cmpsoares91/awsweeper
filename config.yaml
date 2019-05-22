@@ -7,9 +7,11 @@ options:
     - us-west-2
 
 filters:
-  firehose:
   ec2:
   s3_bucket:
   dynamodb_table:
   elasticsearch_domain:
+  firehose:
+  kinesis_data_stream:
   rds_instance:
+  rds_cluster:

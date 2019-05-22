@@ -2,6 +2,7 @@ package aws
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/rds"
@@ -52,7 +53,7 @@ func (a *RDSInstanceAPI) list() (resources IResources, err error) {
 	return resources, err
 }
 
-// XYZ ...
+// RDSInstance ...
 type RDSInstance Resource
 
 // Delete ...
@@ -70,8 +71,9 @@ func (r *RDSInstance) Delete() error {
 	}
 
 	result, err := api.DeleteDBInstance(&rds.DeleteDBInstanceInput{
-		DBInstanceIdentifier: r.ID,
-		SkipFinalSnapshot:    aws.Bool(true),
+		DBInstanceIdentifier:      r.ID,
+		SkipFinalSnapshot:         aws.Bool(false),
+		FinalDBSnapshotIdentifier: aws.String(fmt.Sprintf("%s-final-snapshot", *r.ID)),
 	})
 	if err != nil {
 		return err
