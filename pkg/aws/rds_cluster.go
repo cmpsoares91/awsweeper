@@ -36,7 +36,7 @@ func (a *RDSClusterAPI) list() (resources IResources, err error) {
 
 	for _, cluster := range output.DBClusters {
 		r := &RDSCluster{
-			Name:         cluster.DatabaseName,
+			Name:         cluster.DBClusterArn,
 			ID:           cluster.DBClusterIdentifier,
 			CreationDate: cluster.ClusterCreateTime,
 			Tags:         make(Tags),
