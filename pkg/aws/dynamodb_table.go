@@ -118,7 +118,7 @@ func (r *DynamoDbTable) EnsureLazyLoaded() {
 		api := r.api.(*dynamodb.DynamoDB)
 		if tableDesc, err := api.DescribeTable(&dynamodb.DescribeTableInput{TableName: r.ID}); err == nil {
 			r.CreationDate = tableDesc.Table.CreationDateTime
-			logrus.WithField("tableDesc", tableDesc).Info("tableDesc")
+			logrus.WithField("tableDesc", tableDesc).Debug("tableDesc")
 			if listTagsOutput, err := api.ListTagsOfResource(&dynamodb.ListTagsOfResourceInput{ResourceArn: tableDesc.Table.TableArn}); err == nil {
 				for _, tag := range listTagsOutput.Tags {
 					r.Tags[*tag.Key] = *tag.Value
