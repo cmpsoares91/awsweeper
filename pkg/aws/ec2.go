@@ -76,10 +76,22 @@ func (a *EC2API) list() (IResources, error) {
 type Instance Resource
 
 // GetID ...
-func (r *Instance) GetID() *string { return r.ID }
+func (r *Instance) GetID() string {
+	if r.ID != nil {
+		return *r.ID
+	}
+
+	return ""
+}
 
 // GetName ...
-func (r *Instance) GetName() *string { return r.Name }
+func (r *Instance) GetName() string {
+	if r.Name != nil {
+		return *r.Name
+	}
+
+	return ""
+}
 
 // GetTags ...
 func (r *Instance) GetTags() *Tags { return &r.Tags }
@@ -91,6 +103,7 @@ func (r *Instance) GetCreationDate() *time.Time { return r.CreationDate }
 func (r *Instance) Delete() error {
 	logrus.WithField("EC2", *r.Name).Info("Deleting an EC2")
 	api := r.api.(*ec2.EC2)
+
 	result, err := api.TerminateInstances(&ec2.TerminateInstancesInput{
 		InstanceIds: []*string{r.ID},
 	})

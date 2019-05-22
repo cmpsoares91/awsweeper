@@ -59,8 +59,8 @@ func (r *Firehose) Delete() error {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Result":               result.String(),
-		"Delivery Stream Name": *r.Name,
+		"Result": result.String(),
+		"Name":   *r.Name,
 	}).Info("Firehose deleted")
 
 	return nil
@@ -73,10 +73,22 @@ func (r *Firehose) String() string {
 }
 
 // GetID ...
-func (r *Firehose) GetID() *string { return r.ID }
+func (r *Firehose) GetID() string {
+	if r.ID != nil {
+		return *r.ID
+	}
+
+	return ""
+}
 
 // GetName ...
-func (r *Firehose) GetName() *string { return r.Name }
+func (r *Firehose) GetName() string {
+	if r.Name != nil {
+		return *r.Name
+	}
+
+	return ""
+}
 
 // GetTags ...
 func (r *Firehose) GetTags() *Tags { return &r.Tags }

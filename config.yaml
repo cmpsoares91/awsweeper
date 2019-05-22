@@ -12,3 +12,4 @@ filters:
   s3_bucket:
   dynamodb_table:
   elasticsearch_domain:
+  rds_instance:

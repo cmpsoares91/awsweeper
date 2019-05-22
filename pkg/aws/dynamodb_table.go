@@ -87,8 +87,8 @@ func (r *DynamoDbTable) Delete() error {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Result":     result.String(),
-		"Table Name": *r.Name,
+		"Result": result.String(),
+		"Name":   *r.Name,
 	}).Info("DDB Table deleted")
 	return nil
 }
@@ -100,10 +100,22 @@ func (r *DynamoDbTable) String() string {
 }
 
 // GetID ...
-func (r *DynamoDbTable) GetID() *string { return r.ID }
+func (r *DynamoDbTable) GetID() string {
+	if r.ID != nil {
+		return *r.ID
+	}
+
+	return ""
+}
 
 // GetName ...
-func (r *DynamoDbTable) GetName() *string { return r.Name }
+func (r *DynamoDbTable) GetName() string {
+	if r.Name != nil {
+		return *r.Name
+	}
+
+	return ""
+}
 
 // GetTags ...
 func (r *DynamoDbTable) GetTags() *Tags { return &r.Tags }

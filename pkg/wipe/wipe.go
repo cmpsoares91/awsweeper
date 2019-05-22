@@ -21,28 +21,21 @@ func (c *Wiper) Run() (aws.IRegionResourceTypeResources, []error, error) {
 		resourcesToWipe[region] = make(aws.IResourceTypeResources)
 
 		aws.New(region, c.Config.Options.MaxRetries, c.Config.Options.RoleToAssume)
-		logrus.WithField("c.Config.Filters", c.Config.Filters).Info()
 		for resType, filters := range c.Config.Filters {
 			rs := resourcesToWipe[region][resType]
 			c.getFilteredResources(resType, filters, &rs, &warnings)
 			resourcesToWipe[region][resType] = rs
 		}
 
-		logrus.WithField("Number of Resources", resourcesToWipe.Len()).Info("Filtered resources")
-
-		if c.Config.Options.DryRun == false {
-			c.wipe(resourcesToWipe)
-		} else {
-			logrus.Info("Skip deleting resources because DryRun mode is ON")
-		}
+		logrus.WithField("Number of Resources", resourcesToWipe.Len()).Info("Final number of filtered resources")
+		c.wipe(&resourcesToWipe)
 	}
 
 	return resourcesToWipe, warnings, nil
 }
 
 func (c *Wiper) getFilteredResources(resourceType aws.ResourceType, filters filters.Filters, rs *aws.IResources, warnings *[]error) {
-	logrus.WithField("Resource Type", resourceType).Info()
-	logrus.WithField("Filters", filters).Info()
+	logrus.WithField("Resource Type", resourceType).Info("Fetching resources")
 
 	if candidateResources, err := aws.List(resourceType); err != nil {
 		*warnings = append(*warnings, err)
@@ -58,14 +51,18 @@ func (c *Wiper) getFilteredResources(resourceType aws.ResourceType, filters filt
 
 // wipe does the actual deletion (in parallel) of a given (filtered) list of AWS resources.
 // (so we get retries, detaching of policies from some IAM resources before deletion, and other stuff for free).
-func (c *Wiper) wipe(rtrs aws.IRegionResourceTypeResources) {
-	for _, trs := range rtrs {
-		for _, resources := range trs {
-			for _, resource := range resources {
-				if err := resource.Delete(); err != nil {
-					logrus.WithError(err).WithField("Resource", resource).Error("Failed to delete a resource")
+func (c *Wiper) wipe(rtrs *aws.IRegionResourceTypeResources) {
+	if c.Config.Options.DryRun == false {
+		for _, trs := range *rtrs {
+			for _, resources := range trs {
+				for _, resource := range resources {
+					if err := resource.Delete(); err != nil {
+						logrus.WithError(err).WithField("Resource", resource).Error("Failed to delete a resource")
+					}
 				}
 			}
 		}
+	} else {
+		logrus.Info("Skip deleting resources because DryRun mode is ON")
 	}
 }

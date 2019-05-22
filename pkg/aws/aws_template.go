@@ -46,10 +46,22 @@ func (r *XYZ) String() string {
 }
 
 // GetID ...
-func (r *XYZ) GetID() *string { return r.ID }
+func (r *XYZ) GetID() string {
+	if r.ID != nil {
+		return *r.ID
+	}
+
+	return ""
+}
 
 // GetName ...
-func (r *XYZ) GetName() *string { return r.Name }
+func (r *XYZ) GetName() string {
+	if r.Name != nil {
+		return *r.Name
+	}
+
+	return ""
+}
 
 // GetTags ...
 func (r *XYZ) GetTags() *Tags { return &r.Tags }

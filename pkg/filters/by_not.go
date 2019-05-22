@@ -22,18 +22,18 @@ func (f Filter) byNot(resources aws.IResources) (filteredResources aws.IResource
 	}).Debug("'Not' filter discovered resources that should not be included")
 	matchedResourcesMap := make(map[string]bool)
 	for _, mr := range matchedResources {
-		matchedResourcesMap[*mr.GetID()] = true
+		matchedResourcesMap[mr.GetID()] = true
 	}
 
 	for _, r := range resources {
-		if _, ok := matchedResourcesMap[*r.GetID()]; !ok {
+		if _, ok := matchedResourcesMap[r.GetID()]; !ok {
 			filteredResources = append(filteredResources, r)
 		}
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Number of Resources": len(resources),
-		"After filtering":     len(filteredResources),
+		"Before Filtering": len(resources),
+		"After Filtering":  len(filteredResources),
 	}).Debug("Filtered By Not")
 	return filteredResources, err
 }

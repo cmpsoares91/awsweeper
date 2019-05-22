@@ -53,8 +53,8 @@ func (filters Filters) Apply(resources aws.IResources) (filteredResources aws.IR
 
 func (filter Filter) Apply(resources aws.IResources) (filteredResources aws.IResources, err error) {
 	logrus.WithFields(logrus.Fields{
-		"Filter":              filter,
-		"Number of Resources": len(resources),
+		"Filter": filter,
+		"Number of Resources Before Filtering": len(resources),
 	}).Info("Apply Filter")
 
 	filteredResources = resources

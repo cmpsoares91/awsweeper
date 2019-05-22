@@ -60,8 +60,8 @@ func (r *ElasticSearchDomain) Delete() error {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Result":      result.String(),
-		"Domain Name": *r.Name,
+		"Result": result.String(),
+		"Name":   *r.Name,
 	}).Info("ElasticSearchDomain deleted")
 	return nil
 }
@@ -73,10 +73,22 @@ func (r *ElasticSearchDomain) String() string {
 }
 
 // GetID ...
-func (r *ElasticSearchDomain) GetID() *string { return r.ID }
+func (r *ElasticSearchDomain) GetID() string {
+	if r.ID != nil {
+		return *r.ID
+	}
+
+	return ""
+}
 
 // GetName ...
-func (r *ElasticSearchDomain) GetName() *string { return r.Name }
+func (r *ElasticSearchDomain) GetName() string {
+	if r.Name != nil {
+		return *r.Name
+	}
+
+	return ""
+}
 
 // GetTags ...
 func (r *ElasticSearchDomain) GetTags() *Tags { return &r.Tags }

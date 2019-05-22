@@ -16,7 +16,7 @@ func (f Filter) byIDs(resources aws.IResources) (filteredResources aws.IResource
 	logrus.WithField("IDs:", f.IDs).Debug("Filtering resources based on IDs")
 	for _, idFilter := range *f.IDs {
 		for _, r := range resources {
-			if ok, err := regexp.MatchString(idFilter, *r.GetID()); ok {
+			if ok, err := regexp.MatchString(idFilter, r.GetID()); ok {
 				if err != nil {
 					return nil, err
 				}
@@ -27,8 +27,8 @@ func (f Filter) byIDs(resources aws.IResources) (filteredResources aws.IResource
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Number of Resources": len(resources),
-		"After filtering":     len(filteredResources),
+		"Before Filtering": len(resources),
+		"After Filtering":  len(filteredResources),
 	}).Debug("Filtered By ID")
 	return filteredResources, err
 }

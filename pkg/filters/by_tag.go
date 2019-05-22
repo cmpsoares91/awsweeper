@@ -42,8 +42,8 @@ func (f Filter) byTags(resources aws.IResources) (filteredResources aws.IResourc
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Number of Resources": len(resources),
-		"After filtering":     len(filteredResources),
+		"Before Filtering": len(resources),
+		"After Filtering":  len(filteredResources),
 	}).Debug("Filtered By Tags")
 	return filteredResources, err
 }

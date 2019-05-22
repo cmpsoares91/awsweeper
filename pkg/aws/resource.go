@@ -24,8 +24,8 @@ type Tags map[string]string
 
 // IResource ...
 type IResource interface {
-	GetID() *string
-	GetName() *string
+	GetID() string
+	GetName() string
 	GetTags() *Tags
 	GetCreationDate() *time.Time
 	Delete() error
@@ -47,7 +47,7 @@ func (rrtrs *IRegionResourceTypeResources) String() string {
 	for region, rtrs := range *rrtrs {
 		for resourceType, resources := range rtrs {
 			for _, r := range resources {
-				output = output + fmt.Sprintf("- [%s][%s][%s] %s\n", region, resourceType, *r.GetID(), *r.GetName())
+				output = output + fmt.Sprintf("- [%s][%s][%s] %s\n", region, resourceType, r.GetID(), r.GetName())
 			}
 		}
 	}

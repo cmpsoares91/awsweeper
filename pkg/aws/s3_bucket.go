@@ -93,7 +93,7 @@ func (r *S3Bucket) Delete() error {
 
 		logrus.WithFields(logrus.Fields{
 			"Result": result.String(),
-			"Bucket": *r.Name,
+			"Name":   *r.Name,
 		}).Info("Bucket deleted")
 	}
 	return nil
@@ -105,10 +105,22 @@ func (r *S3Bucket) String() string {
 }
 
 // GetID ...
-func (r *S3Bucket) GetID() *string { return r.ID }
+func (r *S3Bucket) GetID() string {
+	if r.ID != nil {
+		return *r.ID
+	}
+
+	return ""
+}
 
 // GetName ...
-func (r *S3Bucket) GetName() *string { return r.Name }
+func (r *S3Bucket) GetName() string {
+	if r.Name != nil {
+		return *r.Name
+	}
+
+	return ""
+}
 
 // GetTags ...
 func (r *S3Bucket) GetTags() *Tags {

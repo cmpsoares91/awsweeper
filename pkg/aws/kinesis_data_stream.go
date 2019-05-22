@@ -59,8 +59,8 @@ func (r *KinesisDataStream) Delete() error {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"Result":      result.String(),
-		"Dtream Name": *r.Name,
+		"Result": result.String(),
+		"Name":   *r.Name,
 	}).Info("KinesisDataStream deleted")
 
 	return nil
@@ -73,10 +73,22 @@ func (r *KinesisDataStream) String() string {
 }
 
 // GetID ...
-func (r *KinesisDataStream) GetID() *string { return r.ID }
+func (r *KinesisDataStream) GetID() string {
+	if r.ID != nil {
+		return *r.ID
+	}
+
+	return ""
+}
 
 // GetName ...
-func (r *KinesisDataStream) GetName() *string { return r.Name }
+func (r *KinesisDataStream) GetName() string {
+	if r.Name != nil {
+		return *r.Name
+	}
+
+	return ""
+}
 
 // GetTags ...
 func (r *KinesisDataStream) GetTags() *Tags { return &r.Tags }
