@@ -9,6 +9,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// FirstSeenDateTimeMarker tagKey to be used for resources that do not have creation date
+const FirstSeenDateTimeMarker = "aws-janitor:first-seen-date"
+
 // New ...
 func New(region string, maxRetries int, roleToAssume string) {
 	config := &aws.Config{
@@ -34,4 +37,5 @@ func New(region string, maxRetries int, roleToAssume string) {
 	register(sess, config, &FirehoseAPI{})
 	register(sess, config, &RDSInstanceAPI{})
 	register(sess, config, &RDSClusterAPI{})
+	register(sess, config, &MediaLiveInputAPI{})
 }
