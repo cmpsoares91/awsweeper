@@ -10,39 +10,39 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type MediaLiveInputAPI struct {
+type MediaLiveChannelAPI struct {
 	api *medialive.MediaLive
 }
 
-func (a *MediaLiveInputAPI) getType() ResourceType {
-	return "medialive_input"
+func (a *MediaLiveChannelAPI) getType() ResourceType {
+	return "medialive_channel"
 }
 
-func (a *MediaLiveInputAPI) getPriority() int64 {
+func (a *MediaLiveChannelAPI) getPriority() int64 {
 	return -1
 }
 
-func (a *MediaLiveInputAPI) new(s *session.Session, cfg *aws.Config) {
+func (a *MediaLiveChannelAPI) new(s *session.Session, cfg *aws.Config) {
 	a.api = medialive.New(s, cfg)
 }
 
-func (a *MediaLiveInputAPI) list() (resources IResources, err error) {
-	list, err := a.api.ListInputs(&medialive.ListInputsInput{})
+func (a *MediaLiveChannelAPI) list() (resources IResources, err error) {
+	list, err := a.api.ListChannels(&medialive.ListChannelsInput{})
 	if err != nil {
 		return nil, err
 	}
 
-	for _, input := range list.Inputs {
-		r := &MediaLiveInput{
-			Name:         input.Name,
-			ID:           input.Id,
+	for _, channel := range list.Channels {
+		r := &MediaLiveChannel{
+			Name:         channel.Name,
+			ID:           channel.Id,
 			Tags:         make(Tags),
 			CreationDate: nil,
 			ResourceType: a.getType(),
 			api:          a.api,
 		}
 
-		for k, v := range input.Tags {
+		for k, v := range channel.Tags {
 			if r.CreationDate == nil && k == FirstSeenDateTimeMarker {
 				firstSeenDate, err := time.Parse(time.RFC3339, *v)
 				if err != nil {
@@ -58,18 +58,18 @@ func (a *MediaLiveInputAPI) list() (resources IResources, err error) {
 		// Since medialive resources are not providing creationDate, we'll utilize tags
 		// to mark the resources first time we see them and then use tag marker as createdDate
 		if r.CreationDate == nil {
-			input.Tags[FirstSeenDateTimeMarker] = aws.String(time.Now().Format(time.RFC3339))
+			channel.Tags[FirstSeenDateTimeMarker] = aws.String(time.Now().Format(time.RFC3339))
 			_, err := a.api.CreateTags(&medialive.CreateTagsInput{
-				ResourceArn: input.Arn,
-				Tags:        input.Tags,
+				ResourceArn: channel.Arn,
+				Tags:        channel.Tags,
 			})
 
 			if err != nil {
 				logrus.WithFields(logrus.Fields{
 					"Error": err.Error(),
-					"ID":    *input.Id,
-					"Name":  *input.Name,
-				}).Warn("Failed to set marker tag for a resource")
+					"ID":    *channel.Id,
+					"Name":  *channel.Name,
+				}).Warn("Failed to set marker tag for a medialive_channel resource")
 			}
 		}
 
@@ -79,12 +79,12 @@ func (a *MediaLiveInputAPI) list() (resources IResources, err error) {
 	return resources, err
 }
 
-// MediaLiveInput ...
-type MediaLiveInput Resource
+// MediaLiveChannel ...
+type MediaLiveChannel Resource
 
 // Delete ...
-func (r *MediaLiveInput) Delete() error {
-	logrus.WithField("MediaLiveInput", *r.Name).Info("Deleting MediaLiveInput")
+func (r *MediaLiveChannel) Delete() error {
+	logrus.WithField("MediaLiveChannel", *r.Name).Info("Deleting MediaLiveChannel")
 	api := r.api.(*medialive.MediaLive)
 	result, err := api.DeleteInput(&medialive.DeleteInputInput{InputId: r.ID})
 	if err != nil {
@@ -94,19 +94,19 @@ func (r *MediaLiveInput) Delete() error {
 	logrus.WithFields(logrus.Fields{
 		"Result": result.String(),
 		"Name":   *r.Name,
-	}).Info("MediaLiveInput deleted")
+	}).Info("MediaLiveChannel deleted")
 
 	return nil
 }
 
 // String ...
-func (r *MediaLiveInput) String() string {
+func (r *MediaLiveChannel) String() string {
 	b, _ := json.Marshal(r)
 	return string(b)
 }
 
 // GetID ...
-func (r *MediaLiveInput) GetID() string {
+func (r *MediaLiveChannel) GetID() string {
 	if r.ID != nil {
 		return *r.ID
 	}
@@ -115,7 +115,7 @@ func (r *MediaLiveInput) GetID() string {
 }
 
 // GetName ...
-func (r *MediaLiveInput) GetName() string {
+func (r *MediaLiveChannel) GetName() string {
 	if r.Name != nil {
 		return *r.Name
 	}
@@ -124,10 +124,10 @@ func (r *MediaLiveInput) GetName() string {
 }
 
 // GetTags ...
-func (r *MediaLiveInput) GetTags() *Tags { return &r.Tags }
+func (r *MediaLiveChannel) GetTags() *Tags { return &r.Tags }
 
 // GetCreationDate ...
-func (r *MediaLiveInput) GetCreationDate() *time.Time { return r.CreationDate }
+func (r *MediaLiveChannel) GetCreationDate() *time.Time { return r.CreationDate }
 
 // EnsureLazyLoaded ...
-func (r *MediaLiveInput) EnsureLazyLoaded() {}
+func (r *MediaLiveChannel) EnsureLazyLoaded() {}

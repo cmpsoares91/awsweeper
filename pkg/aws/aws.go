@@ -38,4 +38,5 @@ func New(region string, maxRetries int, roleToAssume string) {
 	register(sess, config, &RDSInstanceAPI{})
 	register(sess, config, &RDSClusterAPI{})
 	register(sess, config, &MediaLiveInputAPI{})
+	register(sess, config, &MediaLiveChannelAPI{})
 }
