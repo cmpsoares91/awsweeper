@@ -15,3 +15,5 @@ filters:
   kinesis_data_stream:
   rds_instance:
   rds_cluster:
+  medialive_input:
+  medialive_channel:
