@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/sirupsen/logrus"
@@ -142,7 +143,11 @@ func (r *S3Bucket) EnsureLazyLoaded() {
 				}
 			}
 		} else {
-			logrus.WithError(err).Fatal("Failed to load Tags")
+			// NoSuchTagSet is an expected error when bucket doesn't have any tag
+			if aerr, ok := err.(awserr.Error); ok && aerr.Code() == "NoSuchTagSet" {
+			} else {
+				logrus.WithError(err).Fatal("Failed to load Tags")
+			}
 		}
 
 		r.lazyLoadPerformed = true
