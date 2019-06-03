@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/sirupsen/logrus"
@@ -24,6 +26,17 @@ func (a *KinesisDataStreamAPI) getPriority() int64 {
 
 func (a *KinesisDataStreamAPI) new(s *session.Session, cfg *aws.Config) {
 	a.api = kinesis.New(s, cfg)
+
+	// Addressing https://github.com/aws/aws-sdk-go/issues/1376
+	a.api.Handlers.Retry.PushBack(func(r *request.Request) {
+		err, ok := r.Error.(awserr.Error)
+		if !ok || err == nil {
+			return
+		}
+		if err.Code() == kinesis.ErrCodeLimitExceededException {
+			r.Retryable = aws.Bool(true)
+		}
+	})
 }
 
 func (a *KinesisDataStreamAPI) list() (resources IResources, err error) {
