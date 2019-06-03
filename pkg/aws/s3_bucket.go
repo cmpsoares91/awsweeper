@@ -146,7 +146,7 @@ func (r *S3Bucket) EnsureLazyLoaded() {
 			// NoSuchTagSet is an expected error when bucket doesn't have any tag
 			if aerr, ok := err.(awserr.Error); ok && aerr.Code() == "NoSuchTagSet" {
 			} else {
-				logrus.WithError(err).Fatal("Failed to load Tags")
+				logrus.WithError(err).WithField("Bucket", r.Name).Fatal("Failed to load Tags")
 			}
 		}
 
