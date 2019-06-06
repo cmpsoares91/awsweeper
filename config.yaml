@@ -1,0 +1,19 @@
+options:
+  dry-run: true
+  max-retries: 1
+  s3-force-path-style: true
+  regions:
+    - ap-southeast-2
+    - us-west-2
+
+filters:
+  ec2:
+  s3_bucket:
+  dynamodb_table:
+  elasticsearch_domain:
+  firehose:
+  kinesis_data_stream:
+  rds_instance:
+  rds_cluster:
+  medialive_input:
+  medialive_channel:

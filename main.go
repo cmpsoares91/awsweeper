@@ -1,15 +1,33 @@
 package main
 
-//go:generate mockgen -package mocks -destination resource/mocks/autoscaling.go -source=$GOPATH/pkg/mod/github.com/aws/aws-sdk-go@v1.15.61/service/autoscaling/autoscalingiface/interface.go
-//go:generate mockgen -package mocks -destination resource/mocks/ec2.go -source=$GOPATH/pkg/mod/github.com/aws/aws-sdk-go@v1.15.61/service/ec2/ec2iface/interface.go
-//go:generate mockgen -package mocks -destination resource/mocks/sts.go -source=$GOPATH/pkg/mod/github.com/aws/aws-sdk-go@v1.15.61/service/sts/stsiface/interface.go
-
 import (
-	"os"
+	"fmt"
 
-	"github.com/cloudetc/awsweeper/command"
+	"github.com/iflix/awsweeper/pkg/config"
+	"github.com/iflix/awsweeper/pkg/wipe"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	os.Exit(command.WrappedMain())
+	logrus.SetLevel(logrus.DebugLevel)
+	yamlFilePath := "config.yaml"
+	config, err := config.Load(yamlFilePath)
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to open config file")
+	}
+
+	wiper := wipe.Wiper{
+		Config: config,
+	}
+
+	resources, warnings, err := wiper.Run()
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to wipe resources")
+	}
+
+	if len(warnings) > 0 {
+		logrus.WithField("Warnings:", warnings).Warn("Unable to perform as expected because of these warnings")
+	}
+
+	fmt.Println(resources)
 }
