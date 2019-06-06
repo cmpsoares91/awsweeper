@@ -1,0 +1,87 @@
+aws_ami:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_autoscaling_group:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_cloudformation_stack:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_ebs_snapshot:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_ebs_volume:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_efs_file_system:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_eip:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_elb:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_iam_group:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_iam_instance_profile:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_iam_policy:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_iam_role:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_iam_user:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_instance:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_internet_gateway:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_key_pair:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_kms_alias:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_kms_key:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_launch_configuration:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_nat_gateway:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_network_acl:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_network_interface:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_route53_zone:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_route_table:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_s3_bucket:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_security_group:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_subnet:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_vpc:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
+aws_vpc_endpoint:
+ - tags:
+     DeploymentIdentifier: sandbox-vd-2965-shell
