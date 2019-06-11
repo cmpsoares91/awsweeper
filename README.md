@@ -1,20 +1,20 @@
 # AWSweeper
 
 <p align="right">
-  <a href="https://github.com/cloudetc/awsweeper/releases/latest">
+  <a href="https://github.com/cmpsoares91/awsweeper/releases/latest">
     <img alt="Release" src="https://img.shields.io/github/release/cloudetc/awsweeper.svg?style=flat-square">
   </a>
-  <a href="https://gitlab.com/jckuester/awsweeper/commits/master">
-    <img alt="pipeline status" src="https://gitlab.com/jckuester/awsweeper/badges/master/pipeline.svg" />
+  <a href="https://gitlab.com/jckuester/cmpsoares91/commits/master">
+    <img alt="pipeline status" src="https://gitlab.com/cmpsoares91/awsweeper/badges/master/pipeline.svg" />
   </a>
-  <a href="https://goreportcard.com/report/github.com/cloudetc/awsweeper">
-    <img alt="Go Report" src="https://goreportcard.com/badge/github.com/cloudetc/awsweeper?style=flat-square" />
+  <a href="https://goreportcard.com/badge/github.com/cmpsoares91/awsweeper">
+    <img alt="Go Report" src="https://goreportcard.com/badge/github.com/cmpsoares91/awsweeper?style=flat-square" />
   </a>
-  <a href="https://godoc.org/github.com/cloudetc/awsweeper">
+  <a href="https://godoc.org/github.com/cmpsoares91/awsweeper">
     <img alt="Go Doc" src="https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square" />
   </a>
-  <a href="https://github.com/cloudetc/awsweeper/blob/master/LICENSE">
-    <img alt="Software License" src="https://img.shields.io/github/license/cloudetc/awsweeper.svg?style=flat-square" />
+  <a href="https://github.com/cmpsoares91/awsweeper/blob/master/LICENSE">
+    <img alt="Software License" src="https://img.shields.io/github/license/cmpsoares91/awsweeper.svg?style=flat-square" />
   </a>
 </p>
 
