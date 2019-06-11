@@ -4,9 +4,6 @@
   <a href="https://github.com/cmpsoares91/awsweeper/releases/latest">
     <img alt="Release" src="https://img.shields.io/github/release/cloudetc/awsweeper.svg?style=flat-square">
   </a>
-  <a href="https://gitlab.com/jckuester/cmpsoares91/commits/master">
-    <img alt="pipeline status" src="https://gitlab.com/cmpsoares91/awsweeper/badges/master/pipeline.svg" />
-  </a>
   <a href="https://goreportcard.com/badge/github.com/cmpsoares91/awsweeper">
     <img alt="Go Report" src="https://goreportcard.com/badge/github.com/cmpsoares91/awsweeper?style=flat-square" />
   </a>
