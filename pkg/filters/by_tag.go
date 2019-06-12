@@ -4,7 +4,7 @@ import (
 	"log"
 	"regexp"
 
-	"github.com/iflix/awsweeper/pkg/aws"
+	"github.com/cmpsoares91/awsweeper/pkg/aws"
 	"github.com/sirupsen/logrus"
 )
 

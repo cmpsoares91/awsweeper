@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/iflix/awsweeper/pkg/config"
-	"github.com/iflix/awsweeper/pkg/wipe"
+	"github.com/cmpsoares91/awsweeper/pkg/config"
+	"github.com/cmpsoares91/awsweeper/pkg/wipe"
 	"github.com/sirupsen/logrus"
 )
 

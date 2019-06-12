@@ -3,8 +3,8 @@ package config
 import (
 	"fmt"
 
-	"github.com/iflix/awsweeper/pkg/aws"
-	"github.com/iflix/awsweeper/pkg/filters"
+	"github.com/cmpsoares91/awsweeper/pkg/aws"
+	"github.com/cmpsoares91/awsweeper/pkg/filters"
 	"github.com/spf13/afero"
 	yaml "gopkg.in/yaml.v2"
 )

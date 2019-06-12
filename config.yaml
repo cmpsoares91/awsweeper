@@ -1,19 +1,39 @@
 options:
-  dry-run: true
+  dry-run: false
   max-retries: 1
   s3-force-path-style: true
   regions:
-    - ap-southeast-2
-    - us-west-2
+    - eu-west-1
+  role-to-assume: "arn:aws:iam::512843054246:role/VAKT-DEVOPS-ROLE"
 
 filters:
-  ec2:
-  s3_bucket:
-  dynamodb_table:
-  elasticsearch_domain:
-  firehose:
-  kinesis_data_stream:
-  rds_instance:
-  rds_cluster:
-  medialive_input:
-  medialive_channel:
+    ec2:
+        - tags:
+            - DeploymentIdentifier: "vd-2965"
+    dynamodb_table:
+        - ids:
+            - "vd-2965"
+    elasticsearch_domain:
+        - ids:
+            - "vd-2965"
+    firehose:
+        - ids:
+            - "vd-2965"
+    kinesis_data_stream:
+        - ids:
+            - "vd-2965"
+    rds_instance:
+        - ids:
+            - "vd-2965"
+    rds_cluster:
+        - ids:
+            - "vd-2965"
+    medialive_input:
+        - ids:
+            - "vd-2965"
+    medialive_channel:
+        - ids:
+            - "vd-2965"
+    s3_bucket:
+        - ids:
+            - "vd-2965"

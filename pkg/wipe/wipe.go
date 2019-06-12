@@ -1,9 +1,9 @@
 package wipe
 
 import (
-	"github.com/iflix/awsweeper/pkg/aws"
-	"github.com/iflix/awsweeper/pkg/config"
-	"github.com/iflix/awsweeper/pkg/filters"
+	"github.com/cmpsoares91/awsweeper/pkg/aws"
+	"github.com/cmpsoares91/awsweeper/pkg/config"
+	"github.com/cmpsoares91/awsweeper/pkg/filters"
 	"github.com/sirupsen/logrus"
 )
 
